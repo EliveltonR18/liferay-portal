@@ -12,8 +12,6 @@
  * details.
  */
 
-import VALIDATIONS from '../util/validations.es';
-
 const getValidationFromExpression = (validations, validation) => {
 	return function transformValidationFromExpression(expression) {
 		let mutValidation;
@@ -33,14 +31,12 @@ const getValidationFromExpression = (validations, validation) => {
 };
 
 const transformValidations = (validations, initialDataType) => {
-	const dataType = initialDataType == 'string' ? initialDataType : 'numeric';
+	const dataType = initialDataType === 'string' ? initialDataType : 'numeric';
 
-	return VALIDATIONS[dataType].map((validation) => {
-		return {
-			...validation,
-			checked: false,
-			value: validation.name,
-		};
+	return validations[dataType].map((validation) => {
+		const newProps = {checked: false, value: validation.name};
+
+		return Object.assign(validation, newProps);
 	});
 };
 
@@ -97,14 +93,11 @@ export const transformData = ({
 	defaultLanguageId,
 	editingLanguageId,
 	initialDataType,
-	initialValidations,
 	validation,
+	validations: initialValidations,
 	value,
 }) => {
-	const dataType =
-		validation && validation.dataType
-			? validation.dataType
-			: initialDataType;
+	const dataType = validation?.dataType || initialDataType;
 	const validations = transformValidations(initialValidations, dataType);
 	const parsedValidation = getValidation(
 		defaultLanguageId,
