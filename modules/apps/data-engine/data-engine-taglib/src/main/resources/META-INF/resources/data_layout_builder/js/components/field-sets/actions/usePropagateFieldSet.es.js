@@ -19,10 +19,7 @@ import ClayPanel from '@clayui/panel';
 import {useFormState} from 'data-engine-js-components-web';
 import React, {useContext} from 'react';
 
-import AppContext from '../../../AppContext.es';
 import {getItem} from '../../../utils/client.es';
-import {getDataDefinitionFieldSet} from '../../../utils/dataDefinition.es';
-import {containsField} from '../../../utils/dataLayoutVisitor.es';
 
 const getName = ({name = {}}) => {
 	const defaultLanguageId = Liferay.ThemeDisplay.getDefaultLanguageId();
@@ -57,7 +54,12 @@ const FieldListItems = ({items, name}) => {
 	});
 };
 
-const propagateFieldSet = ({dataDefinition, dataLayout, dispatch, onClose}) => {
+const usePropagateFieldSet = () => {
+	const [{onClose}, dispatch] = useContext(ClayModalContext);
+	const {dataDefinition, dataLayout} = useFormState({
+		schema: ['dataDefinition', 'dataLayout'],
+	});
+
 	const defaultLanguageId = Liferay.ThemeDisplay.getDefaultLanguageId();
 
 	return async ({fieldSet, isDeleteAction, modal, onPropagate}) => {
@@ -65,43 +67,22 @@ const propagateFieldSet = ({dataDefinition, dataLayout, dispatch, onClose}) => {
 			`/o/data-engine/v2.0/data-definitions/${fieldSet.id}/data-definition-field-links`
 		);
 
-		const dataDefinitionFieldSet = getDataDefinitionFieldSet(
-			dataDefinition.dataDefinitionFields,
-			fieldSet.id
+		const dataDefinitionField = dataDefinition.dataDefinitionFields.find(
+			({customProperties: {ddmStructureId}}) =>
+				ddmStructureId == fieldSet.id
 		);
 
-		const fieldInDataLayout =
-			dataDefinitionFieldSet &&
-			containsField(
-				dataLayout.dataLayoutPages,
-				dataDefinitionFieldSet.name
+		if (dataDefinitionField) {
+			const hasItem = items.some(
+				({dataDefinition: {id}}) => id === dataDefinition.id
 			);
-
-		const item = items.find(
-			({dataDefinition: linkedDataDefinition}) =>
-				linkedDataDefinition.id === dataDefinition.id
-		);
-
-		if (item) {
-			const {dataLayouts} = item;
-
-			const dataLayoutIndex = dataLayouts.findIndex(
-				({id}) => id === dataLayout.id
-			);
-
-			if (dataLayoutIndex === -1 && fieldInDataLayout) {
-				dataLayouts.push(dataLayout);
+			if (!hasItem) {
+				items.push({
+					dataDefinition,
+					dataLayouts: [dataLayout],
+					dataListViews: [],
+				});
 			}
-			else if (dataLayoutIndex !== -1 && !fieldInDataLayout) {
-				dataLayouts.splice(dataLayoutIndex, 1);
-			}
-		}
-		else if (fieldInDataLayout) {
-			items.push({
-				dataDefinition,
-				dataLayouts: [dataLayout],
-				dataListViews: [],
-			});
 		}
 
 		const dataLayouts = [];
@@ -158,10 +139,10 @@ const propagateFieldSet = ({dataDefinition, dataLayout, dispatch, onClose}) => {
 								displayType="secondary"
 							>
 								<ClayPanel.Body>
-									{dataDefinitionFieldSet && (
+									{dataDefinitionField && (
 										<FieldInfo
 											label={Liferay.Language.get('name')}
-											value={dataDefinitionFieldSet.name}
+											value={dataDefinitionField.name}
 										/>
 									)}
 
@@ -255,18 +236,5 @@ const propagateFieldSet = ({dataDefinition, dataLayout, dispatch, onClose}) => {
 		dispatch(payload);
 	};
 };
-export function usePropagateFieldSet() {
-	const [{onClose}, dispatch] = useContext(ClayModalContext);
-	const {dataDefinition, dataLayout} = useFormState({
-		schema: ['dataDefinition', 'dataLayout'],
-	});
 
-	return propagateFieldSet({dataDefinition, dataLayout, dispatch, onClose});
-}
-
-export default () => {
-	const [{onClose}, dispatch] = useContext(ClayModalContext);
-	const [{dataDefinition, dataLayout}] = useContext(AppContext);
-
-	return propagateFieldSet({dataDefinition, dataLayout, dispatch, onClose});
-};
+export default usePropagateFieldSet;

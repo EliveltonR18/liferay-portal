@@ -22,6 +22,7 @@ export class DataDefinitionSchema extends Schema {
 		'availableLanguageIds',
 		'dataDefinition',
 		'defaultLanguageId',
+		'id',
 		'name',
 		'pages',
 	];
@@ -70,6 +71,14 @@ export class DataDefinitionSchema extends Schema {
 		return this[SYMBOL_RAW].defaultLanguageId;
 	}
 
+	get id() {
+		const {
+			dataDefinition: {id},
+		} = this[SYMBOL_RAW];
+
+		return id;
+	}
+
 	get name() {
 		return this[SYMBOL_RAW].name;
 	}
@@ -80,6 +89,7 @@ export class DataDefinitionSchema extends Schema {
 			contentType: this.contentType,
 			dataDefinitionFields: this.dataDefinitionFields,
 			defaultLanguageId: this.defaultLanguageId,
+			id: this.id,
 			name: this.name,
 		};
 	}

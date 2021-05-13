@@ -34,7 +34,7 @@ import {pageReducer} from 'data-engine-js-components-web/js/custom/form/reducers
 import {default as React, useCallback, useState} from 'react';
 
 import getFieldsWithoutOptions from '../../../js/components/field-sets/actions/getFieldsWithoutOptions.es';
-import {usePropagateFieldSet} from '../../../js/components/field-sets/actions/usePropagateFieldSet.es';
+import usePropagateFieldSet from '../../../js/components/field-sets/actions/usePropagateFieldSet.es';
 import TranslationManager from '../../../js/components/translation-manager/TranslationManager.es';
 import {addItem, updateItem} from '../../../js/utils/client.es';
 import {getFieldSetDDMForm} from '../../../js/utils/dataConverter.es';

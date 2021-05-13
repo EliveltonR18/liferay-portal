@@ -24,7 +24,7 @@ import React, {useEffect, useState} from 'react';
 
 import EmptyState from '../../../js/components/empty-state/EmptyState.es';
 import {useNewDeleteFieldSet} from '../../../js/components/field-sets/actions/useDeleteFieldSet.es';
-import {usePropagateFieldSet} from '../../../js/components/field-sets/actions/usePropagateFieldSet.es';
+import usePropagateFieldSet from '../../../js/components/field-sets/actions/usePropagateFieldSet.es';
 import FieldType from '../../../js/components/field-types/FieldType.es';
 import {DRAG_FIELDSET_ADD} from '../../../js/drag-and-drop/dragTypes.es';
 import {getDataDefinitionFieldSet} from '../../../js/utils/dataConverter.es';
