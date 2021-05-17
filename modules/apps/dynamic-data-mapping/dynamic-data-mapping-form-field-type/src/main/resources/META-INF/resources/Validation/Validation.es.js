@@ -194,6 +194,7 @@ const Main = ({
 	dataType: initialDataType,
 	defaultLanguageId,
 	editingLanguageId,
+	ffCustomDDMValidationEnabled,
 	label,
 	name,
 	onChange,
@@ -207,6 +208,7 @@ const Main = ({
 	const data = transformData({
 		defaultLanguageId,
 		editingLanguageId,
+		ffCustomDDMValidationEnabled,
 		initialDataType,
 		initialValidations,
 		validation,

@@ -12,6 +12,8 @@
  * details.
  */
 
+import VALIDATIONS from '../util/validations.es';
+
 const getValidationFromExpression = (validations, validation) => {
 	return function transformValidationFromExpression(expression) {
 		let mutValidation;
@@ -30,8 +32,15 @@ const getValidationFromExpression = (validations, validation) => {
 	};
 };
 
-const transformValidations = (validations, initialDataType) => {
-	const dataType = initialDataType === 'string' ? initialDataType : 'numeric';
+const transformValidations = (
+	initialValidations,
+	initialDataType,
+	ffCustomDDMValidationEnabled
+) => {
+	const dataType = initialDataType !== 'string' ? 'numeric' : initialDataType;
+	const validations = ffCustomDDMValidationEnabled
+		? initialValidations
+		: VALIDATIONS;
 
 	return validations[dataType].map((validation) => {
 		const newProps = {checked: false, value: validation.name};
@@ -54,8 +63,7 @@ const getValidation = (
 
 		if (selectedValidation) {
 			parameterMessage = selectedValidation.parameterMessage;
-		}
-		else {
+		} else {
 			selectedValidation = validations[0];
 		}
 
@@ -92,13 +100,18 @@ export const getSelectedValidation = (validations) => {
 export const transformData = ({
 	defaultLanguageId,
 	editingLanguageId,
+	ffCustomDDMValidationEnabled,
 	initialDataType,
 	validation,
 	validations: initialValidations,
 	value,
 }) => {
 	const dataType = validation?.dataType || initialDataType;
-	const validations = transformValidations(initialValidations, dataType);
+	const validations = transformValidations(
+		initialValidations,
+		dataType,
+		ffCustomDDMValidationEnabled
+	);
 	const parsedValidation = getValidation(
 		defaultLanguageId,
 		editingLanguageId,
