@@ -14,6 +14,7 @@
 
 import ClayForm from '@clayui/form';
 import {usePrevious} from '@liferay/frontend-js-react-web';
+import {useFormState} from 'data-engine-js-components-web';
 import React, {useEffect, useState} from 'react';
 
 import Checkbox from '../Checkbox/Checkbox.es';
@@ -201,17 +202,17 @@ const Main = ({
 	readOnly,
 	spritemap,
 	validation,
-	validations: initialValidations,
 	value = {},
 	visible,
 }) => {
+	const {validations} = useFormState();
 	const data = transformData({
 		defaultLanguageId,
 		editingLanguageId,
 		ffCustomDDMValidationEnabled,
 		initialDataType,
-		initialValidations,
 		validation,
+		validations,
 		value,
 	});
 

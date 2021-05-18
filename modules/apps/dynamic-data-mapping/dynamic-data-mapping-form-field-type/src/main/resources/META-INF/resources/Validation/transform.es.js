@@ -38,14 +38,17 @@ const transformValidations = (
 	ffCustomDDMValidationEnabled
 ) => {
 	const dataType = initialDataType !== 'string' ? 'numeric' : initialDataType;
-	const validations = ffCustomDDMValidationEnabled
-		? initialValidations
-		: VALIDATIONS;
+	const validations =
+		ffCustomDDMValidationEnabled && initialValidations
+			? initialValidations
+			: VALIDATIONS;
 
 	return validations[dataType].map((validation) => {
-		const newProps = {checked: false, value: validation.name};
-
-		return Object.assign(validation, newProps);
+		return {
+			...validation,
+			checked: false,
+			value: validation.name,
+		};
 	});
 };
 
@@ -63,7 +66,8 @@ const getValidation = (
 
 		if (selectedValidation) {
 			parameterMessage = selectedValidation.parameterMessage;
-		} else {
+		}
+		else {
 			selectedValidation = validations[0];
 		}
 
