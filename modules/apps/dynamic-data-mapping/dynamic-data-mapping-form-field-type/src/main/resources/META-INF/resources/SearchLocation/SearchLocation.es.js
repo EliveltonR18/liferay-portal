@@ -15,6 +15,7 @@
 import {ClayInput} from '@clayui/form';
 import React, {useMemo, useState} from 'react';
 
+import ConditionalWrapper from './ConditionalWrapper.es';
 import Component from './SearchLocationField.es';
 
 function transformValues({
@@ -63,6 +64,7 @@ const Main = ({
 	searchLocationValue = '',
 	stateValue = '',
 	value,
+	visibleFields,
 	...otherProps
 }) => {
 	delete otherProps.label;
@@ -114,81 +116,112 @@ const Main = ({
 					/>
 				</div>
 				<div>
-					<Component
-						label="Address"
-						onChange={(event) => {
-							const value = {
-								...values,
-								addressValue: event.target.value,
-							};
-							setValues(value);
-							onChange(event, JSON.stringify(value));
-						}}
-						value={transformedAddressValue || ''}
-						{...otherProps}
-					/>
+					<ConditionalWrapper
+						condition={
+							visibleFields && visibleFields.includes('address')
+						}
+					>
+						<Component
+							label="Address"
+							onChange={(event) => {
+								const value = {
+									...values,
+									addressValue: event.target.value,
+								};
+								setValues(value);
+								onChange(event, JSON.stringify(value));
+							}}
+							value={transformedAddressValue || ''}
+							{...otherProps}
+						/>
+					</ConditionalWrapper>
 				</div>
 			</div>
 			<div>
 				<div>
-					<Component
-						label="City"
-						onChange={(event) => {
-							const value = {
-								...values,
-								cityValue: event.target.value,
-							};
-							setValues(value);
-							onChange(event, JSON.stringify(value));
-						}}
-						value={transformedCityValue || ''}
-						{...otherProps}
-					/>
+					<ConditionalWrapper
+						condition={
+							visibleFields && visibleFields.includes('city')
+						}
+					>
+						<Component
+							label="City"
+							onChange={(event) => {
+								const value = {
+									...values,
+									cityValue: event.target.value,
+								};
+								setValues(value);
+								onChange(event, JSON.stringify(value));
+							}}
+							value={transformedCityValue || ''}
+							{...otherProps}
+						/>
+					</ConditionalWrapper>
 				</div>
 				<div>
-					<Component
-						label="State"
-						onChange={(event) => {
-							const value = {
-								...values,
-								stateValue: event.target.value,
-							};
-							setValues(value);
-							onChange(event, JSON.stringify(value));
-						}}
-						value={transformedStateValue || ''}
-						{...otherProps}
-					/>
+					<ConditionalWrapper
+						condition={
+							visibleFields && visibleFields.includes('state')
+						}
+					>
+						<Component
+							label="State"
+							onChange={(event) => {
+								const value = {
+									...values,
+									stateValue: event.target.value,
+								};
+								setValues(value);
+								onChange(event, JSON.stringify(value));
+							}}
+							value={transformedStateValue || ''}
+							{...otherProps}
+						/>
+					</ConditionalWrapper>
 				</div>
 				<div>
-					<Component
-						label="Postal Code"
-						onChange={(event) => {
-							const value = {
-								...values,
-								postalCodeValue: event.target.value,
-							};
-							setValues(value);
-							onChange(event, JSON.stringify(value));
-						}}
-						value={transformedPostalCodeValue || ''}
-						{...otherProps}
-					/>
+					<ConditionalWrapper
+						condition={
+							visibleFields &&
+							visibleFields.includes('postal-code')
+						}
+					>
+						<Component
+							label="Postal Code"
+							onChange={(event) => {
+								const value = {
+									...values,
+									postalCodeValue: event.target.value,
+								};
+								setValues(value);
+								onChange(event, JSON.stringify(value));
+							}}
+							value={transformedPostalCodeValue || ''}
+							{...otherProps}
+						/>
+					</ConditionalWrapper>
 				</div>
 				<div>
-					<Component
-						label="Country"
-						onChange={(event) => {
-							const value = {
-								...values,
-								countryValue: event.target.value,
-							};
-							setValues(value);
-							onChange(event, JSON.stringify(value));
-						}}
-						value={transformedCountryValue || ''}
-						{...otherProps}
-					/>
+					<ConditionalWrapper
+						condition={
+							visibleFields && visibleFields.includes('country')
+						}
+					>
+						<Component
+							label="Country"
+							onChange={(event) => {
+								const value = {
+									...values,
+									countryValue: event.target.value,
+								};
+								setValues(value);
+								onChange(event, JSON.stringify(value));
+							}}
+							value={transformedCountryValue || ''}
+							{...otherProps}
+						/>
+					</ConditionalWrapper>
 				</div>
 			</div>
 			<ClayInput name={name} type="hidden" value={value} />
