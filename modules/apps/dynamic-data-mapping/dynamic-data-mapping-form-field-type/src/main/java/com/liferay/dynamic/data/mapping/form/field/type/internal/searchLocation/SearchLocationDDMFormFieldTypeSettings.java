@@ -89,7 +89,8 @@ public interface SearchLocationDDMFormFieldTypeSettings
 	@DDMFormField(
 		label = "%layout", optionLabels = {"%one-column", "%two-columns"},
 		optionValues = {"one-column", "two-columns"},
-		predefinedValue = "[\"one-column\"]", type = "select"
+		predefinedValue = "[\"one-column\"]",
+		properties = "showEmptyOption=false", type = "select"
 	)
 	public LocalizedValue layout();
 
