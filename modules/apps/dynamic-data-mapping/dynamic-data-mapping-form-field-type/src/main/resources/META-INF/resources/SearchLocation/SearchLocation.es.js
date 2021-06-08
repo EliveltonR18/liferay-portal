@@ -13,7 +13,7 @@
  */
 
 import {ClayInput} from '@clayui/form';
-import React, {useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
 import Component from './SearchLocationField.es';
 
@@ -53,6 +53,54 @@ function transformValues({
 		: [];
 }
 
+let autoComplete;
+
+const loadScript = (url, callback, readOnly) => {
+	const script = document.createElement('script');
+	script.type = 'text/javascript';
+
+	if (script.readyState) {
+		script.onreadystatechange = function () {
+			if (
+				script.readyState === 'loaded' ||
+				script.readyState === 'complete'
+			) {
+				script.onreadystatechange = null;
+				callback();
+			}
+		};
+	}
+	else {
+		script.onload = () => callback();
+	}
+	script.src = url;
+	const element = document.getElementById(
+		'search_location-input_fieldDetails'
+	);
+	const hasChild = element.getElementsByTagName('script').length > 0;
+	/* eslint-disable-next-line no-unused-expressions */
+	element && !readOnly && !hasChild ? element.appendChild(script) : null;
+};
+
+function handleScriptLoad(updateSearchLocationValue) {
+	const element = document.getElementById(
+		'search_location-input_fieldDetails'
+	);
+	autoComplete = new window.google.maps.places.Autocomplete(element);
+	autoComplete.setFields(['address_component', 'formatted_address']);
+	autoComplete.addListener('place_changed', () =>
+		handlePlaceSelect(updateSearchLocationValue)
+	);
+}
+
+async function handlePlaceSelect(updateSearchLocationValue) {
+	const addressObject = autoComplete.getPlace();
+	if (addressObject) {
+		const searchLocationValue = addressObject.formatted_address;
+		updateSearchLocationValue('searchLocationValue', searchLocationValue);
+	}
+}
+
 const Main = ({
 	addressValue = '',
 	cityValue = '',
@@ -60,6 +108,7 @@ const Main = ({
 	name,
 	onChange,
 	postalCodeValue = '',
+	readOnly,
 	searchLocationValue = '',
 	stateValue = '',
 	value,
@@ -94,6 +143,28 @@ const Main = ({
 	]);
 
 	const [values, setValues] = useState({});
+	const autoCompleteRef = useRef(null);
+
+	// remover api key
+
+	const GOOGLE_API_KEY = 'INSERT_GOOGLE_API_KEY';
+	const url = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_API_KEY}&libraries=places`;
+
+	const updateValues = useCallback(
+		(key, valueProp) => {
+			const value = {
+				...values,
+				[key]: valueProp,
+			};
+			setValues(value);
+			onChange({target: {value: JSON.stringify(value)}});
+		},
+		[values, setValues, onChange]
+	);
+
+	useEffect(() => {
+		loadScript(url, () => handleScriptLoad(updateValues), readOnly);
+	}, [url, updateValues, readOnly]);
 
 	return (
 		<div>
@@ -101,14 +172,15 @@ const Main = ({
 				<div>
 					<Component
 						label="Search Location"
-						onChange={(event) => {
-							const value = {
-								...values,
-								searchLocationValue: event.target.value,
-							};
-							setValues(value);
-							onChange(event, JSON.stringify(value));
-						}}
+						name="search_location-input"
+						onChange={(event) =>
+							updateValues(
+								'searchLocationValue',
+								event.target.value
+							)
+						}
+						readOnly={readOnly}
+						ref={autoCompleteRef}
 						value={transformedSearchLocationValue || ''}
 						{...otherProps}
 					/>
@@ -116,14 +188,11 @@ const Main = ({
 				<div>
 					<Component
 						label="Address"
-						onChange={(event) => {
-							const value = {
-								...values,
-								addressValue: event.target.value,
-							};
-							setValues(value);
-							onChange(event, JSON.stringify(value));
-						}}
+						name="address-input"
+						onChange={(event) =>
+							updateValues('addressValue', event.target.value)
+						}
+						readOnly={readOnly}
 						value={transformedAddressValue || ''}
 						{...otherProps}
 					/>
@@ -133,14 +202,11 @@ const Main = ({
 				<div>
 					<Component
 						label="City"
-						onChange={(event) => {
-							const value = {
-								...values,
-								cityValue: event.target.value,
-							};
-							setValues(value);
-							onChange(event, JSON.stringify(value));
-						}}
+						name="city-input"
+						onChange={(event) =>
+							updateValues('cityValue', event.target.value)
+						}
+						readOnly={readOnly}
 						value={transformedCityValue || ''}
 						{...otherProps}
 					/>
@@ -148,14 +214,11 @@ const Main = ({
 				<div>
 					<Component
 						label="State"
-						onChange={(event) => {
-							const value = {
-								...values,
-								stateValue: event.target.value,
-							};
-							setValues(value);
-							onChange(event, JSON.stringify(value));
-						}}
+						name="state-input"
+						onChange={(event) =>
+							updateValues('stateValue', event.target.value)
+						}
+						readOnly={readOnly}
 						value={transformedStateValue || ''}
 						{...otherProps}
 					/>
@@ -163,14 +226,11 @@ const Main = ({
 				<div>
 					<Component
 						label="Postal Code"
-						onChange={(event) => {
-							const value = {
-								...values,
-								postalCodeValue: event.target.value,
-							};
-							setValues(value);
-							onChange(event, JSON.stringify(value));
-						}}
+						name="postal_code-input"
+						onChange={(event) =>
+							updateValues('postalCodeValue', event.target.value)
+						}
+						readOnly={readOnly}
 						value={transformedPostalCodeValue || ''}
 						{...otherProps}
 					/>
@@ -178,14 +238,11 @@ const Main = ({
 				<div>
 					<Component
 						label="Country"
-						onChange={(event) => {
-							const value = {
-								...values,
-								countryValue: event.target.value,
-							};
-							setValues(value);
-							onChange(event, JSON.stringify(value));
-						}}
+						name="country-input"
+						onChange={(event) =>
+							updateValues('countryValue', event.target.value)
+						}
+						readOnly={readOnly}
 						value={transformedCountryValue || ''}
 						{...otherProps}
 					/>

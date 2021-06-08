@@ -22,7 +22,6 @@ import {useSyncValue} from '../hooks/useSyncValue.es';
 
 const SearchLocation = ({
 	defaultLanguageId,
-	disabled,
 	editingLanguageId,
 	fieldName,
 	id,
@@ -35,6 +34,7 @@ const SearchLocation = ({
 	onFocus,
 	placeholder,
 	readOnly,
+	ref,
 	shouldUpdateValue,
 	syncDelay,
 	value: initialValue,
@@ -102,7 +102,7 @@ const SearchLocation = ({
 				aria-labelledby={id}
 				className="ddm-field-text"
 				dir={Liferay.Language.direction[editingLanguageId]}
-				disabled={disabled}
+				disabled={readOnly}
 				id={fieldDetailsId}
 				lang={editingLanguageId}
 				name={name}
@@ -132,7 +132,7 @@ const SearchLocation = ({
 				}}
 				onFocus={onFocus}
 				placeholder={placeholder}
-				ref={inputRef}
+				ref={ref || inputRef}
 				type="text"
 				value={value}
 			/>
