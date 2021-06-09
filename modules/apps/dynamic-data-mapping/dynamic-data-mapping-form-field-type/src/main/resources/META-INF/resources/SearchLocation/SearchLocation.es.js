@@ -172,7 +172,7 @@ const Main = ({
 
 	// remover api key
 
-	const GOOGLE_API_KEY = 'AIzaSyDhcGPYIOeCmH3Ocna4pqjHbaqUIHy2tSY';
+	const GOOGLE_API_KEY = 'INSERT_YOUR_API_KEY';
 	const url = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_API_KEY}&libraries=places`;
 
 	const updateValuesByPlace = (values) => {
