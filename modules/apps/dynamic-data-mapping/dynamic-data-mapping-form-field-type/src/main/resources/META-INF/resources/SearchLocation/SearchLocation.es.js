@@ -35,8 +35,7 @@ function transformValues({
 			postalCodeValue = values.postalCodeValue;
 			searchLocationValue = values.searchLocationValue;
 			stateValue = values.stateValue;
-		}
-		catch (e) {
+		} catch (e) {
 			console.warn('Unable to parse JSON', value);
 		}
 	}
@@ -69,8 +68,7 @@ const loadScript = (url, callback, readOnly) => {
 				callback();
 			}
 		};
-	}
-	else {
+	} else {
 		script.onload = () => callback();
 	}
 	script.src = url;
@@ -82,23 +80,50 @@ const loadScript = (url, callback, readOnly) => {
 	element && !readOnly && !hasChild ? element.appendChild(script) : null;
 };
 
-function handleScriptLoad(updateSearchLocationValue) {
+function handleScriptLoad(updateValuesByPlace) {
 	const element = document.getElementById(
 		'search_location-input_fieldDetails'
 	);
 	autoComplete = new window.google.maps.places.Autocomplete(element);
 	autoComplete.setFields(['address_component', 'formatted_address']);
 	autoComplete.addListener('place_changed', () =>
-		handlePlaceSelect(updateSearchLocationValue)
+		handlePlaceSelect(updateValuesByPlace)
 	);
 }
 
-async function handlePlaceSelect(updateSearchLocationValue) {
-	const addressObject = autoComplete.getPlace();
-	if (addressObject) {
-		const searchLocationValue = addressObject.formatted_address;
-		updateSearchLocationValue('searchLocationValue', searchLocationValue);
+async function handlePlaceSelect(updateValuesByPlace) {
+	const place = autoComplete.getPlace();
+	const addressComponents = place?.address_components;
+	const addressTypes = {
+		administrative_area_level_1: 'short_name',
+		administrative_area_level_2: 'long_name',
+		country: 'long_name',
+		postal_code: 'short_name',
+		route: 'long_name',
+	};
+	const address = {
+		country: '',
+		administrative_area_level_1: '',
+		administrative_area_level_2: '',
+		formatted_address: place?.formatted_address,
+		postal_code: '',
+		route: '',
+	};
+
+	for (let i = 0; i < addressComponents.length; i++) {
+		const addressType = addressComponents[i].types[0];
+
+		address[addressType] = addressComponents[i][addressTypes[addressType]];
 	}
+
+	updateValuesByPlace({
+		addressValue: address.route,
+		cityValue: address.administrative_area_level_2,
+		countryValue: address.country,
+		postalCodeValue: address.postal_code,
+		searchLocationValue: address.formatted_address,
+		stateValue: address.administrative_area_level_1,
+	});
 }
 
 const Main = ({
@@ -147,8 +172,13 @@ const Main = ({
 
 	// remover api key
 
-	const GOOGLE_API_KEY = 'INSERT_GOOGLE_API_KEY';
+	const GOOGLE_API_KEY = 'AIzaSyDhcGPYIOeCmH3Ocna4pqjHbaqUIHy2tSY';
 	const url = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_API_KEY}&libraries=places`;
+
+	const updateValuesByPlace = (values) => {
+		setValues(values);
+		onChange({target: {value: JSON.stringify(values)}});
+	};
 
 	const updateValues = useCallback(
 		(key, valueProp) => {
@@ -163,7 +193,7 @@ const Main = ({
 	);
 
 	useEffect(() => {
-		loadScript(url, () => handleScriptLoad(updateValues), readOnly);
+		loadScript(url, () => handleScriptLoad(updateValuesByPlace), readOnly);
 	}, [url, updateValues, readOnly]);
 
 	return (
