@@ -18,6 +18,7 @@ import {SettingsContext} from 'dynamic-data-mapping-form-builder';
 import React, {useEffect, useState} from 'react';
 
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
+import usePlaces from './usePlaces.es';
 
 const parse = (value, defaultValue) => {
 	try {
@@ -31,6 +32,7 @@ const parse = (value, defaultValue) => {
 const Field = ({
 	disabled,
 	editingLanguageId,
+	id,
 	label,
 	name,
 	onBlur,
@@ -53,6 +55,7 @@ const Field = ({
 				className="ddm-field-text"
 				dir={Liferay.Language.direction[editingLanguageId]}
 				disabled={disabled}
+				id={id}
 				name={name}
 				onBlur={onBlur}
 				onChange={(event) => {
@@ -75,6 +78,7 @@ const Field = ({
 
 const Main = ({
 	disabled,
+	googlePlacesAPIKey,
 	label,
 	labels,
 	name,
@@ -84,10 +88,16 @@ const Main = ({
 	placeholder,
 	readOnly,
 	settingsContext,
-	value: initialValue,
+	value,
 	visibleFields,
 	...otherProps
 }) => {
+	usePlaces({
+		elementId: `${name}#place`,
+		googlePlacesAPIKey,
+		isReadOnly: readOnly,
+	});
+
 	const [availableLabels, setAvailableLabels] = useState();
 	const [availableVisibleFields, setAvailableVisibleFields] = useState([]);
 	const currentVisibleFields = Array.isArray(visibleFields)
@@ -95,7 +105,6 @@ const Main = ({
 		: parse(visibleFields, []);
 
 	const {editingLanguageId} = useFormState();
-	const [value, setValue] = useState(initialValue);
 
 	const parsedValue = parse(value, {});
 
@@ -125,18 +134,15 @@ const Main = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	useEffect(() => {
-		setValue(value);
-	}, [value]);
-
 	return (
 		<div>
 			<Field
 				{...otherProps}
 				disabled={disabled}
 				editingLanguageId={editingLanguageId}
+				id={`${name}#place`}
 				label={label}
-				name={name}
+				name={`${name}#place`}
 				onBlur={onBlur}
 				onChange={onChange}
 				onFocus={onFocus}
