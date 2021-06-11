@@ -29,6 +29,16 @@ const parse = (value, defaultValue) => {
 	}
 };
 
+const getClassNameBasedOnLayout = (layout, visibleField) => {
+	return layout?.includes('two-columns') && visibleField !== 'address'
+		? 'col-md-6'
+		: 'col-md-12';
+};
+
+const isEmpty = (object) => {
+	return object && Object.keys(object).length === 0;
+};
+
 const Field = ({
 	disabled,
 	editingLanguageId,
@@ -59,28 +69,34 @@ const Field = ({
 				name={name}
 				onBlur={onBlur}
 				onChange={(event) => {
-					onChange(
-						event,
-						JSON.stringify({
-							...parsedValue,
-							[visibleField]: event.target.value,
-						})
-					);
+					const value = !isEmpty(parsedValue)
+						? {
+								...parsedValue,
+								[visibleField]: event.target.value,
+						  }
+						: {[visibleField]: event.target.value};
+					onChange({
+						target: {
+							value: JSON.stringify({
+								...value,
+							}),
+						},
+					});
 				}}
 				onFocus={onFocus}
 				placeholder={placeholder}
 				type="text"
-				value={parsedValue[visibleField] ?? ''}
+				value={!isEmpty(parsedValue) ? parsedValue[visibleField] : ''}
 			/>
 		</FieldBase>
 	);
 };
 
 const Main = ({
-	disabled,
 	googlePlacesAPIKey,
 	label,
 	labels,
+	layout,
 	name,
 	onBlur,
 	onChange,
@@ -103,6 +119,7 @@ const Main = ({
 	const currentVisibleFields = Array.isArray(visibleFields)
 		? visibleFields
 		: parse(visibleFields, []);
+	const currentLayout = Array.isArray(layout) ? layout : parse(layout, []);
 
 	const {editingLanguageId} = useFormState();
 
@@ -138,7 +155,8 @@ const Main = ({
 		<div>
 			<Field
 				{...otherProps}
-				disabled={disabled}
+				className="col-md-12"
+				disabled={readOnly}
 				editingLanguageId={editingLanguageId}
 				id={`${name}#place`}
 				label={label}
@@ -151,32 +169,38 @@ const Main = ({
 				readOnly={readOnly}
 				visibleField="place"
 			/>
+			<div className="row">
+				{availableVisibleFields.length > 0 &&
+					availableVisibleFields.map((visibleField) => {
+						if (currentVisibleFields.includes(visibleField)) {
+							const visibleFieldName = name + '#' + visibleField;
+							const className = getClassNameBasedOnLayout(
+								currentLayout,
+								visibleField
+							);
 
-			{availableVisibleFields.length > 0 &&
-				availableVisibleFields.map((visibleField) => {
-					if (currentVisibleFields.includes(visibleField)) {
-						const visibleFieldName = name + '#' + visibleField;
-
-						return (
-							<Field
-								{...otherProps}
-								disabled={disabled}
-								editingLanguageId={editingLanguageId}
-								key={visibleFieldName}
-								label={availableLabels[visibleField]}
-								name={visibleFieldName}
-								onBlur={onBlur}
-								onChange={onChange}
-								onFocus={onFocus}
-								parsedValue={parsedValue}
-								placeholder={placeholder}
-								readOnly={readOnly}
-								visibleField={visibleField}
-							/>
-						);
-					}
-				})}
-
+							return (
+								<div className={className}>
+									<Field
+										{...otherProps}
+										disabled={readOnly}
+										editingLanguageId={editingLanguageId}
+										key={visibleFieldName}
+										label={availableLabels[visibleField]}
+										name={visibleFieldName}
+										onBlur={onBlur}
+										onChange={onChange}
+										onFocus={onFocus}
+										parsedValue={parsedValue}
+										placeholder={placeholder}
+										readOnly={readOnly}
+										visibleField={visibleField}
+									/>
+								</div>
+							);
+						}
+					})}
+			</div>
 			<ClayInput name={name} type="hidden" value={value} />
 		</div>
 	);
