@@ -3,7 +3,7 @@
 exports[`DatePicker has a predefinedValue 1`] = `
 <div>
   <div
-    aria-labelledby="dateField_fieldDetails"
+    aria-labelledby="dateField"
     class="form-group hide"
     data-field-name="dateField"
     tabindex="0"

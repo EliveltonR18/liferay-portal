@@ -3,7 +3,7 @@
 exports[`Field Numeric Input Mask toggle has an inputMaskFormat 1`] = `
 <div>
   <div
-    aria-labelledby="numericField_fieldDetails"
+    aria-labelledby="numericField"
     class="form-group hide"
     data-field-name="numericField"
     tabindex="0"
@@ -35,7 +35,6 @@ exports[`Field Numeric Input Mask toggle has an inputMaskFormat 1`] = `
 exports[`Field Numeric has a helptext 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -60,7 +59,6 @@ exports[`Field Numeric has a helptext 1`] = `
     </span>
     <span
       class="sr-only"
-      id="undefined_fieldDetails"
     >
       Type something
       <br />
@@ -72,7 +70,6 @@ exports[`Field Numeric has a helptext 1`] = `
 exports[`Field Numeric has a key 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -100,7 +97,6 @@ exports[`Field Numeric has a label 1`] = `
     class="form-group hide"
   >
     <label
-      aria-describedby="undefined_fieldDetails"
       class="ddm-label"
       tabindex="0"
     >
@@ -127,7 +123,7 @@ exports[`Field Numeric has a label 1`] = `
 exports[`Field Numeric has a name 1`] = `
 <div>
   <div
-    aria-labelledby="numericField_fieldDetails"
+    aria-labelledby="numericField"
     class="form-group hide"
     data-field-name="numericField"
     tabindex="0"
@@ -153,7 +149,6 @@ exports[`Field Numeric has a name 1`] = `
 exports[`Field Numeric has a placeholder 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -179,7 +174,6 @@ exports[`Field Numeric has a placeholder 1`] = `
 exports[`Field Numeric has a value 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -204,7 +198,7 @@ exports[`Field Numeric has a value 1`] = `
 exports[`Field Numeric has an id 1`] = `
 <div>
   <div
-    aria-labelledby="ID_fieldDetails"
+    aria-labelledby="ID"
     class="form-group hide"
     tabindex="0"
   >
@@ -230,7 +224,6 @@ exports[`Field Numeric has an id 1`] = `
 exports[`Field Numeric is not readOnly 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -255,7 +248,6 @@ exports[`Field Numeric is not readOnly 1`] = `
 exports[`Field Numeric is not required 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -283,7 +275,6 @@ exports[`Field Numeric renders Label if showLabel is true 1`] = `
     class="form-group hide"
   >
     <label
-      aria-describedby="undefined_fieldDetails"
       class="ddm-label"
       tabindex="0"
     >
@@ -310,7 +301,6 @@ exports[`Field Numeric renders Label if showLabel is true 1`] = `
 exports[`Field Numeric renders the default markup 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >

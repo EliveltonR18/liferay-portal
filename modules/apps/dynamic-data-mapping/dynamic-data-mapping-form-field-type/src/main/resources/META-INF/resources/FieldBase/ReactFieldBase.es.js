@@ -199,7 +199,7 @@ function FieldBase({
 		tip,
 	});
 
-	const fieldDetailsId = id ? id + '_fieldDetails' : name + '_fieldDetails';
+	const fieldDetailsId = id || name;
 
 	const hiddenTranslations = useMemo(() => {
 		const array = [];
@@ -313,11 +313,11 @@ function FieldBase({
 					) : (
 						<>
 							<label
-								aria-describedby={fieldDetailsId}
 								className={classNames({
 									'ddm-empty': !showLabel && !required,
 									'ddm-label': showLabel || required,
 								})}
+								htmlFor={fieldDetailsId}
 								tabIndex="0"
 							>
 								{showLabel && label && (

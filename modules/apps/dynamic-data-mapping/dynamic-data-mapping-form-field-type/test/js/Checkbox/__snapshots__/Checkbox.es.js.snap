@@ -3,7 +3,6 @@
 exports[`Field Checkbox has a helptext 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -41,7 +40,6 @@ exports[`Field Checkbox has a helptext 1`] = `
     </span>
     <span
       class="sr-only"
-      id="undefined_fieldDetails"
     >
       Type something
       <br />
@@ -53,7 +51,6 @@ exports[`Field Checkbox has a helptext 1`] = `
 exports[`Field Checkbox has a key 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -91,7 +88,6 @@ exports[`Field Checkbox has a key 1`] = `
 exports[`Field Checkbox has a label 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -131,7 +127,6 @@ exports[`Field Checkbox has a label 1`] = `
 exports[`Field Checkbox has a predefined Value 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -169,7 +164,6 @@ exports[`Field Checkbox has a predefined Value 1`] = `
 exports[`Field Checkbox has a spritemap 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -207,7 +201,6 @@ exports[`Field Checkbox has a spritemap 1`] = `
 exports[`Field Checkbox has a value 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -245,7 +238,7 @@ exports[`Field Checkbox has a value 1`] = `
 exports[`Field Checkbox has an id 1`] = `
 <div>
   <div
-    aria-labelledby="ID_fieldDetails"
+    aria-labelledby="ID"
     class="form-group hide"
     tabindex="0"
   >
@@ -283,7 +276,6 @@ exports[`Field Checkbox has an id 1`] = `
 exports[`Field Checkbox is not editable 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -322,7 +314,6 @@ exports[`Field Checkbox is not editable 1`] = `
 exports[`Field Checkbox is not required 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -360,7 +351,6 @@ exports[`Field Checkbox is not required 1`] = `
 exports[`Field Checkbox is shown as a switcher 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -398,7 +388,6 @@ exports[`Field Checkbox is shown as a switcher 1`] = `
 exports[`Field Checkbox is shown as checkbox 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >
@@ -429,7 +418,6 @@ exports[`Field Checkbox is shown as checkbox 1`] = `
 exports[`Field Checkbox renders Label if showLabel is true 1`] = `
 <div>
   <div
-    aria-labelledby="undefined_fieldDetails"
     class="form-group hide"
     tabindex="0"
   >

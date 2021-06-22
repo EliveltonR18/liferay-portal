@@ -3,7 +3,7 @@
 exports[`Field Text has a helptext 1`] = `
 <div>
   <div
-    aria-labelledby="textField_fieldDetails"
+    aria-labelledby="textField"
     class="form-group hide"
     data-field-name="textField"
     tabindex="0"
@@ -29,7 +29,7 @@ exports[`Field Text has a helptext 1`] = `
     </span>
     <span
       class="sr-only"
-      id="textField_fieldDetails"
+      id="textField"
     >
       Type something
       <br />
@@ -45,8 +45,8 @@ exports[`Field Text has a label 1`] = `
     data-field-name="textField"
   >
     <label
-      aria-describedby="textField_fieldDetails"
       class="ddm-label"
+      for="textField"
       tabindex="0"
     >
       label
@@ -72,7 +72,7 @@ exports[`Field Text has a label 1`] = `
 exports[`Field Text has a placeholder 1`] = `
 <div>
   <div
-    aria-labelledby="textField_fieldDetails"
+    aria-labelledby="textField"
     class="form-group hide"
     data-field-name="textField"
     tabindex="0"
@@ -99,7 +99,7 @@ exports[`Field Text has a placeholder 1`] = `
 exports[`Field Text has a value 1`] = `
 <div>
   <div
-    aria-labelledby="textField_fieldDetails"
+    aria-labelledby="textField"
     class="form-group hide"
     data-field-name="textField"
     tabindex="0"
@@ -125,7 +125,7 @@ exports[`Field Text has a value 1`] = `
 exports[`Field Text has an id 1`] = `
 <div>
   <div
-    aria-labelledby="Id_fieldDetails"
+    aria-labelledby="Id"
     class="form-group hide"
     data-field-name="textField"
     tabindex="0"
@@ -151,7 +151,7 @@ exports[`Field Text has an id 1`] = `
 exports[`Field Text is not readOnly 1`] = `
 <div>
   <div
-    aria-labelledby="textField_fieldDetails"
+    aria-labelledby="textField"
     class="form-group hide"
     data-field-name="textField"
     tabindex="0"
@@ -177,7 +177,7 @@ exports[`Field Text is not readOnly 1`] = `
 exports[`Field Text is not required 1`] = `
 <div>
   <div
-    aria-labelledby="textField_fieldDetails"
+    aria-labelledby="textField"
     class="form-group hide"
     data-field-name="textField"
     tabindex="0"
@@ -203,7 +203,7 @@ exports[`Field Text is not required 1`] = `
 exports[`Field Text is readOnly 1`] = `
 <div>
   <div
-    aria-labelledby="textField_fieldDetails"
+    aria-labelledby="textField"
     class="form-group hide"
     data-field-name="textField"
     tabindex="0"
@@ -234,8 +234,8 @@ exports[`Field Text renders Label if showLabel is true 1`] = `
     data-field-name="textField"
   >
     <label
-      aria-describedby="textField_fieldDetails"
       class="ddm-label"
+      for="textField"
       tabindex="0"
     >
       text
