@@ -51,6 +51,8 @@ const Field = ({
 	parsedValue,
 	placeholder,
 	readOnly,
+	repeatable,
+	showLabel,
 	visibleField,
 	...otherProps
 }) => {
@@ -60,6 +62,8 @@ const Field = ({
 			label={label[editingLanguageId] ?? label}
 			name={name}
 			readOnly={readOnly}
+			repeatable={repeatable}
+			showLabel={showLabel}
 		>
 			<ClayInput
 				className="ddm-field-text"
@@ -103,7 +107,9 @@ const Main = ({
 	onFocus,
 	placeholder,
 	readOnly,
+	repeatable,
 	settingsContext,
+	showLabel,
 	value,
 	visibleFields,
 	...otherProps
@@ -153,7 +159,12 @@ const Main = ({
 	}, []);
 
 	return (
-		<div>
+		<FieldBase
+			{...otherProps}
+			name={name}
+			readOnly={readOnly}
+			repeatable={repeatable}
+		>
 			<Field
 				{...otherProps}
 				className="col-md-12"
@@ -168,6 +179,8 @@ const Main = ({
 				parsedValue={parsedValue}
 				placeholder={placeholder}
 				readOnly={readOnly}
+				repeatable={false}
+				showLabel={showLabel}
 				visibleField="place"
 			/>
 			<div className="row">
@@ -195,6 +208,8 @@ const Main = ({
 										parsedValue={parsedValue}
 										placeholder={placeholder}
 										readOnly={readOnly}
+										repeatable={false}
+										showLabel
 										visibleField={visibleField}
 									/>
 								</div>
@@ -203,7 +218,7 @@ const Main = ({
 					})}
 			</div>
 			<ClayInput name={name} type="hidden" value={value} />
-		</div>
+		</FieldBase>
 	);
 };
 
