@@ -46,6 +46,8 @@ const RichText = ({
 		}
 	}, [editingLanguageId, editorRef]);
 
+	const currentValue = value ?? predefinedValue;
+
 	return (
 		<FieldBase
 			{...otherProps}
@@ -56,22 +58,21 @@ const RichText = ({
 			visible={visible}
 		>
 			<ClassicEditor
-				contents={predefinedValue || value}
+				contents={currentValue}
 				editorConfig={editorConfig}
 				name={name}
 				onChange={(data) => {
-					if (value?.trim() !== data?.trim()) {
+					if (currentValue?.trim() !== data?.trim()) {
 						setDirty(true);
-
-						onChange({}, data);
+						onChange({target: {value: data}});
 					}
 					else if (!dirty) {
 						CKEDITOR.instances[name]?.resetUndo();
 					}
 				}}
-				onSetData={(event) => {
-					if (event.editor.mode === 'source') {
-						onChange(event, event.data.dataValue);
+				onSetData={({data: {dataValue: value}, editor: {mode}}) => {
+					if (mode === 'source') {
+						onChange({target: {value}});
 					}
 				}}
 				readOnly={readOnly}
@@ -79,7 +80,7 @@ const RichText = ({
 			/>
 
 			<input
-				defaultValue={predefinedValue || value}
+				defaultValue={currentValue}
 				id={id || name}
 				name={name}
 				type="hidden"
