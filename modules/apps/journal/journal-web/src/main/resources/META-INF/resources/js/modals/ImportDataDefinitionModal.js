@@ -139,10 +139,10 @@ const ImportDataDefinitionModal = ({
 						className="d-none"
 						name={jsonFileInputId}
 						onChange={({target}) => {
-							const [file] = target.files;
+							const [inputFile] = target.files;
 							setFile({
-								fileName: file.name,
-								inputFile: file,
+								fileName: inputFile.name,
+								inputFile,
 								inputFileValue: target.value,
 							});
 						}}
