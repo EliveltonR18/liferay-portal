@@ -150,7 +150,14 @@ const Main = ({
 			{...otherProps}
 		>
 			<Toggle
-				checked={value !== undefined ? value : predefinedValue}
+				checked={
+					!!(
+						value ??
+						(predefinedValue.length
+							? predefinedValue[0] === 'true'
+							: predefinedValue)
+					)
+				}
 				disabled={readOnly}
 				label={label}
 				name={name}
