@@ -72,19 +72,27 @@ const getLocalizedValue = ({
 		}
 	}
 
-	try {
-		_value = type === 'numeric' ? _value : JSON.parse(_value);
-	}
-	catch (error) {}
-
-	if (type === 'image') {
-		try {
-			return JSON.parse(value);
+	switch (type) {
+		case 'select':
+		case 'numeric': {
+			return _value;
 		}
-		catch (error) {}
+		case 'image': {
+			try {
+				return JSON.parse(value);
+			}
+			catch (error) {
+				return _value;
+			}
+		}
+		default:
+			try {
+				return JSON.parse(_value);
+			}
+			catch (error) {
+				return _value;
+			}
 	}
-
-	return _value;
 };
 
 const getLocalizedPages = (pages, defaultLanguageId, editingLanguageId) => {
