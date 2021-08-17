@@ -161,43 +161,6 @@ exports[`Field Checkbox has a predefined Value 1`] = `
 </div>
 `;
 
-exports[`Field Checkbox has a spritemap 1`] = `
-<div>
-  <div
-    class="form-group hide"
-    tabindex="0"
-  >
-    <label
-      class="ddm-toggle-switch toggle-switch"
-    >
-      <input
-        checked=""
-        class="toggle-switch-check"
-        type="checkbox"
-        value="true"
-      />
-      <span
-        aria-hidden="true"
-        class="toggle-switch-bar"
-      >
-        <span
-          class="toggle-switch-handle"
-        />
-        <span
-          class="toggle-switch-text toggle-switch-text-right"
-        />
-      </span>
-    </label>
-    <input
-      name="undefined_edited"
-      type="hidden"
-      value="false"
-    />
-    
-  </div>
-</div>
-`;
-
 exports[`Field Checkbox has a value 1`] = `
 <div>
   <div
