@@ -50,6 +50,7 @@ export {useFieldTypesResource} from './core/hooks/useResource.es';
 export {elementSetAdded} from './core/thunks/elementSetAdded.es';
 export * as FieldUtil from './core/utils/fields';
 export {default as sectionAdded} from './core/utils/sectionAddedHandler';
+export {capitalize} from './utils/strings';
 export {enableSubmitButton} from './core/utils/submitButtonController.es';
 
 // Custom Form

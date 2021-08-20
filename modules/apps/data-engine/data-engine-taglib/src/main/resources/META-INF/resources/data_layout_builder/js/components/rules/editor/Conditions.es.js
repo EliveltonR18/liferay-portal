@@ -25,6 +25,19 @@ import Timeline from './Timeline.es';
 import {ACTIONS_TYPES} from './actionsTypes.es';
 import {OPERATOR_OPTIONS_TYPES, RIGHT_OPERAND_TYPES} from './config.es';
 
+function getCheckboxOptions() {
+	return [
+		{
+			label: Liferay.Language.get('true'),
+			value: 'true',
+		},
+		{
+			label: Liferay.Language.get('false'),
+			value: 'false',
+		},
+	];
+}
+
 function FieldOperator({
 	left,
 	onChange,
@@ -136,6 +149,48 @@ function FieldLeft({fields, left, onChange}) {
 	);
 }
 
+function evaluateFieldLeft(fieldLeft, value) {
+	const props = {value};
+
+	if (!fieldLeft) {
+		return props;
+	}
+
+	const {editorConfig, name, options = [], type} = fieldLeft;
+
+	switch (type) {
+		case 'checkbox': {
+			props.options = getCheckboxOptions();
+			props.placeholder = Liferay.Language.get('choose-an-option');
+			props.value = [value];
+			break;
+		}
+		case 'checkbox_multiple':
+		case 'radio':
+		case 'select': {
+			props.options = options;
+			props.placeholder = Liferay.Language.get('choose-an-option');
+			break;
+		}
+		case 'rich_text': {
+			if (editorConfig) {
+				const instanceId = FieldSupport.generateInstanceId(8);
+
+				props.editorConfig = FieldSupport.formatEditorConfig(
+					editorConfig,
+					instanceId
+				);
+				props.name = generateName(name, {instanceId});
+			}
+			break;
+		}
+		default:
+			return props;
+	}
+
+	return props;
+}
+
 function FieldRight({fields, left, right, roles, ...otherProps}) {
 	const props = useMemo(() => {
 		switch (right.type) {
@@ -161,41 +216,8 @@ function FieldRight({fields, left, right, roles, ...otherProps}) {
 					options: fields,
 					value: [right.value],
 				};
-			default: {
-				if (
-					left.field?.type === 'rich_text' &&
-					left.field?.editorConfig
-				) {
-					const instanceId = FieldSupport.generateInstanceId(8);
-
-					return {
-						editorConfig: FieldSupport.formatEditorConfig(
-							left.field.editorConfig,
-							instanceId
-						),
-						name: generateName(left.field.name, {
-							instanceId,
-						}),
-						value: right.value,
-					};
-				}
-
-				if (
-					left.field?.type === 'checkbox_multiple' ||
-					left.field?.type === 'radio' ||
-					left.field?.type === 'select'
-				) {
-					return {
-						options: left.field?.options ?? [],
-						placeholder: Liferay.Language.get('choose-an-option'),
-						value: [right.value],
-					};
-				}
-
-				return {
-					value: right.value,
-				};
-			}
+			default:
+				return evaluateFieldLeft(left.field, right.value);
 		}
 	}, [left, right, roles, fields]);
 

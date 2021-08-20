@@ -18,7 +18,7 @@ import ClayIcon from '@clayui/icon';
 import ClayLabel from '@clayui/label';
 import ClayLayout from '@clayui/layout';
 import ClayList from '@clayui/list';
-import {RulesSupport} from 'data-engine-js-components-web';
+import {RulesSupport, capitalize} from 'data-engine-js-components-web';
 import {LangUtil, OPERATOR_OPTIONS_TYPES} from 'data-engine-taglib';
 import React, {useMemo} from 'react';
 
@@ -107,6 +107,8 @@ const Operand = ({field, left, type, value}) => {
 				return value;
 			case 'json':
 				return getOperandTypeJson(JSON.parse(value), left.field);
+			case 'checkbox':
+				return capitalize(value);
 			default:
 				return value;
 		}

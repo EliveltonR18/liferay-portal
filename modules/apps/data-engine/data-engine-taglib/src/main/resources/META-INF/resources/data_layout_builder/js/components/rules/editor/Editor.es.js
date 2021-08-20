@@ -53,7 +53,7 @@ const normalizeValue = (value, right) => {
 		case 'option':
 			return value[0];
 		default:
-			return value;
+			return Array.isArray(value) ? value[0] : value;
 	}
 };
 
