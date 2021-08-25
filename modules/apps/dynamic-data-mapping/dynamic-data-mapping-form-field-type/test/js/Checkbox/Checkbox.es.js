@@ -146,31 +146,34 @@ describe('Field Checkbox', () => {
 		});
 
 		it('check that with false predefinedValue the boolean field is checked when we enable it', () => {
+			const onChange = jest.fn();
+
 			const {queryByLabelText} = render(
 				<Checkbox
 					label="Boolean"
-					onChange={jest.fn()}
+					onChange={onChange}
 					predefinedValue={['false']}
 				/>
 			);
 
 			const input = queryByLabelText('Boolean');
 			userEvent.click(input);
-			expect(input).toBeChecked();
+			expect(onChange).toHaveBeenLastCalledWith(null, true);
 		});
 
 		it('check that with true predefinedValue the boolean field is not checked when we disabled it', () => {
+			const onChange = jest.fn();
 			const {queryByLabelText} = render(
 				<Checkbox
 					label="Boolean"
-					onChange={jest.fn()}
+					onChange={onChange}
 					predefinedValue={['true']}
 				/>
 			);
 
 			const input = queryByLabelText('Boolean');
 			userEvent.click(input);
-			expect(input).not.toBeChecked();
+			expect(onChange).toHaveBeenLastCalledWith(null, false);
 		});
 
 		it('check it shows the label when we set it up', () => {
