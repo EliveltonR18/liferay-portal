@@ -251,7 +251,6 @@ export default (state, action, config) => {
 			return {
 				activePage,
 				focusedField,
-				previousFocusedField: focusedField,
 			};
 		}
 		case EVENT_TYPES.FIELD.CHANGE: {
