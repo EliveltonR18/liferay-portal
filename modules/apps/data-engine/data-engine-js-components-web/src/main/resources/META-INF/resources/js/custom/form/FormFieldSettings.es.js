@@ -40,7 +40,6 @@ import {
  * from layers above changes.
  */
 const StateSync = ({
-	builderPages,
 	defaultLanguageId,
 	editingLanguageId,
 	focusedField,
@@ -77,13 +76,6 @@ const StateSync = ({
 			type: EVENT_TYPES.OBJECT_FIELDS.ADD,
 		});
 	}, [dispatch, objectFields]);
-
-	useEffect(() => {
-		dispatch({
-			payload: {pages: builderPages},
-			type: EVENT_TYPES.FORM_BUILDER.PAGES.UPDATE,
-		});
-	}, [dispatch, builderPages]);
 
 	useEffect(() => {
 		dispatch({
