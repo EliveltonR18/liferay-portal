@@ -13,6 +13,7 @@
  */
 
 import {ClassicEditor} from 'frontend-editor-ckeditor-web';
+import {debounce} from 'frontend-js-web';
 import React, {useEffect, useRef} from 'react';
 
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
@@ -49,6 +50,8 @@ const RichText = ({
 
 	const currentValue = value ?? predefinedValue;
 
+	const onChangeDebounced = debounce(onChange, 600);
+
 	return (
 		<FieldBase
 			{...otherProps}
@@ -64,7 +67,7 @@ const RichText = ({
 				name={name}
 				onChange={(content) => {
 					if (currentValue !== content) {
-						onChange({target: {value: content}});
+						onChangeDebounced({target: {value: content}});
 					}
 				}}
 				onSetData={({data: {dataValue: value}, editor: {mode}}) => {
