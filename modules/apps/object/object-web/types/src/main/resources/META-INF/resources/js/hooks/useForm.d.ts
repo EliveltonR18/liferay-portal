@@ -20,7 +20,7 @@ declare type TUseFormProps = {
 	onSubmit: (values: any) => void;
 };
 declare type TGenericObject = {
-	[key: string]: string;
+	[key: string]: any;
 };
 declare type TUseForm = (
 	props: TUseFormProps

@@ -14,41 +14,37 @@
 
 import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
-import ClayForm, {ClayInput, ClaySelect, ClayToggle} from '@clayui/form';
+import ClayForm, {ClayToggle} from '@clayui/form';
 import ClayModal, {ClayModalProvider, useModal} from '@clayui/modal';
 import React, {useEffect, useState} from 'react';
 
+import useForm from '../hooks/useForm';
 import {
 	firstLetterLowercase,
 	firstLetterUppercase,
 	removeAllSpecialCharacters,
 } from '../utils/string';
-import RequiredMask from './form/RequiredMask';
+import Input from './form/Input';
+import Select from './form/Select';
 
 interface IProps extends React.HTMLAttributes<HTMLElement> {
 	apiURL: string;
 }
-
-type TLocalizableLable = {
-	[key: string]: string;
-};
 
 type TPicklist = {
 	id: string;
 	name: string;
 };
 
-type TFormState = {
-	generateAutoName: boolean;
-	label: TLocalizableLable;
-	name: string;
-	picklist: TPicklist[];
-	required: boolean;
-	listTypeDefinitionId: number;
-	type: string;
-};
+type TNormalizeName = (str: string) => string;
 
-type TFormatName = (str: string) => string;
+type TInitialValues = {
+	label: string;
+	name: string;
+	type: string;
+	listTypeDefinitionId: number;
+	required: boolean;
+};
 
 const objectFieldTypes = [
 	'BigDecimal',
@@ -68,7 +64,7 @@ const headers = new Headers({
 	'Content-Type': 'application/json',
 });
 
-const formatName: TFormatName = (str) => {
+const normalizeName: TNormalizeName = (str) => {
 	const split = str.split(' ');
 	const capitalizeFirstLetters = split.map((str: string) =>
 		firstLetterUppercase(str)
@@ -80,36 +76,32 @@ const formatName: TFormatName = (str) => {
 
 const ModalAddObjectField: React.FC<IProps> = ({apiURL}) => {
 	const [visibleModal, setVisibleModal] = useState<boolean>(false);
-	const [formState, setFormState] = useState<TFormState>({
-		generateAutoName: true,
-		label: {
-			[defaultLanguageId]: '',
-		},
-		listTypeDefinitionId: 0,
-		name: '',
-		picklist: [],
-		required: false,
-		type: '',
-	});
 	const [error, setError] = useState<string>('');
+	const [picklist, setPicklist] = useState<TPicklist[]>([]);
 
 	const {observer, onClose} = useModal({
 		onClose: () => setVisibleModal(false),
 	});
 
-	const handleSaveObjectField = async () => {
-		const {label, listTypeDefinitionId, name, required, type} = formState;
-
+	const onSubmit = async ({
+		label,
+		listTypeDefinitionId,
+		name,
+		required,
+		type,
+	}: TInitialValues) => {
 		const response = await Liferay.Util.fetch(apiURL, {
 			body: JSON.stringify({
 				indexed: true,
 				indexedAsKeyword: false,
 				indexedLanguageId: null,
-				label,
+				label: {
+					[defaultLanguageId]: label,
+				},
 				listTypeDefinitionId,
-				name,
+				name: name || normalizeName(label),
 				required,
-				type,
+				type: type === 'Picklist' ? 'String' : type,
 			}),
 			headers,
 			method: 'POST',
@@ -132,6 +124,28 @@ const ModalAddObjectField: React.FC<IProps> = ({apiURL}) => {
 		}
 	};
 
+	const validate = (values: TInitialValues) => {
+		const errors: any = {};
+
+		if (!values.label) {
+			errors.label = Liferay.Language.get('required');
+		}
+
+		if (!values.label && !values.name) {
+			errors.name = Liferay.Language.get('required');
+		}
+
+		if (!values.type) {
+			errors.type = Liferay.Language.get('required');
+		}
+
+		if (values.type === 'Picklist' && !values.listTypeDefinitionId) {
+			errors.listTypeDefinitionId = Liferay.Language.get('required');
+		}
+
+		return errors;
+	};
+
 	const handleOpenObjectFieldModal = () => setVisibleModal(true);
 
 	useEffect(() => {
@@ -142,80 +156,66 @@ const ModalAddObjectField: React.FC<IProps> = ({apiURL}) => {
 		};
 	}, []);
 
+	const initialValues: TInitialValues = {
+		label: '',
+		listTypeDefinitionId: 0,
+		name: '',
+		required: false,
+		type: '',
+	};
+
+	const {errors, handleChange, handleSubmit, values} = useForm({
+		initialValues,
+		onSubmit,
+		validate,
+	});
+
 	return (
 		<>
 			{visibleModal && (
 				<ClayModal observer={observer}>
-					<ClayModal.Header>
-						{Liferay.Language.get('new-field')}
-					</ClayModal.Header>
+					<ClayForm onSubmit={handleSubmit}>
+						<ClayModal.Header>
+							{Liferay.Language.get('new-field')}
+						</ClayModal.Header>
 
-					<ClayModal.Body>
-						{error && (
-							<ClayAlert displayType="danger">{error}</ClayAlert>
-						)}
+						<ClayModal.Body>
+							{error && (
+								<ClayAlert displayType="danger">
+									{error}
+								</ClayAlert>
+							)}
 
-						<ClayForm.Group>
-							<label htmlFor="objectFieldLabel">
-								{Liferay.Language.get('label')}
-
-								<RequiredMask />
-							</label>
-
-							<ClayInput
+							<Input
+								error={errors.label}
 								id="objectFieldLabel"
-								onChange={({target: {value}}) => {
-									setFormState({
-										...formState,
-										...(formState.generateAutoName && {
-											name: formatName(value),
-										}),
-										label: {
-											[defaultLanguageId]: value,
-										},
-									});
-
-									error && setError('');
-								}}
-								type="text"
-								value={formState.label[defaultLanguageId]}
+								label={Liferay.Language.get('label')}
+								name="label"
+								onChange={handleChange}
+								required
+								value={values.label}
 							/>
-						</ClayForm.Group>
 
-						<ClayForm.Group>
-							<label htmlFor="objectFieldName">
-								{Liferay.Language.get('field-name')}
-
-								<RequiredMask />
-							</label>
-
-							<ClayInput
+							<Input
+								error={errors.name || errors.label}
 								id="objectFieldName"
-								onChange={({target: {value}}) => {
-									setFormState({
-										...formState,
-										generateAutoName: !value,
-										name: value,
-									});
-
-									error && setError('');
-								}}
-								type="text"
-								value={formState.name}
+								label={Liferay.Language.get('field-name')}
+								name="name"
+								onChange={handleChange}
+								required
+								value={
+									values.name || normalizeName(values.label)
+								}
 							/>
-						</ClayForm.Group>
 
-						<ClayForm.Group>
-							<label htmlFor="objectFieldType">
-								{Liferay.Language.get('type')}
+							<Select
+								error={errors.type}
+								label={Liferay.Language.get('type')}
+								onChange={async ({target: {value}}: any) => {
+									const selectedType =
+										objectFieldTypes[Number(value) - 1];
 
-								<RequiredMask />
-							</label>
-
-							<ClaySelect
-								id="objectFieldType"
-								onChange={async ({target: {value}}) => {
-									if (value === 'Picklist') {
+									if (selectedType === 'Picklist') {
 										const result = await Liferay.Util.fetch(
 											'/o/headless-admin-list-type/v1.0/list-type-definitions',
 											{
@@ -228,120 +228,80 @@ const ModalAddObjectField: React.FC<IProps> = ({apiURL}) => {
 											items = [],
 										} = await result.json();
 
-										setFormState({
-											...formState,
-											picklist: items.map(
+										setPicklist(
+											items.map(
 												({id, name}: TPicklist) => ({
 													id,
 													name,
 												})
-											),
-											type: 'String',
-										});
-									}
-									else {
-										setFormState({
-											...formState,
-											type: value,
-										});
+											)
+										);
 									}
 
-									error && setError('');
+									handleChange({
+										target: {
+											name: 'type',
+											value: selectedType,
+										},
+									} as any);
 								}}
-							>
-								<ClaySelect.Option
-									key={0}
-									label={Liferay.Language.get(
-										'choose-an-option'
-									)}
-									value={Liferay.Language.get(
-										'choose-an-option'
-									)}
-								/>
+								options={objectFieldTypes}
+								required
+							/>
 
-								{objectFieldTypes.map((type) => (
-									<ClaySelect.Option
-										key={type}
-										label={type}
-										value={type}
-									/>
-								))}
-							</ClaySelect>
-						</ClayForm.Group>
-
-						{!!formState.picklist.length && (
-							<ClayForm.Group>
-								<label htmlFor="objectFieldPicklist">
-									{Liferay.Language.get('picklist')}
-
-									<RequiredMask />
-								</label>
-
-								<ClaySelect
-									id="objectFieldPicklist"
-									onChange={({target: {value}}) => {
-										setFormState({
-											...formState,
-											listTypeDefinitionId: Number(value),
-										});
-
-										error && setError('');
+							{!!picklist.length && (
+								<Select
+									error={errors.listTypeDefinitionId}
+									label={Liferay.Language.get('picklist')}
+									onChange={({target: {value}}: any) => {
+										handleChange({
+											target: {
+												name: 'listTypeDefinitionId',
+												value:
+													picklist[Number(value) - 1]
+														.id,
+											},
+										} as any);
 									}}
-								>
-									<ClaySelect.Option
-										key={0}
-										label={Liferay.Language.get(
-											'choose-an-option'
-										)}
-										value={Liferay.Language.get(
-											'choose-an-option'
-										)}
-									/>
+									options={picklist.map(({name}) => name)}
+									required
+								/>
+							)}
 
-									{formState.picklist.map(({id, name}) => (
-										<ClaySelect.Option
-											key={id}
-											label={name}
-											value={id}
-										/>
-									))}
-								</ClaySelect>
-							</ClayForm.Group>
-						)}
+							<ClayToggle
+								label={Liferay.Language.get('mandatory')}
+								onToggle={() => {
+									handleChange({
+										target: {
+											name: 'required',
+											value: !values.required,
+										},
+									} as any);
+								}}
+								toggled={values.required}
+							/>
+						</ClayModal.Body>
 
-						<ClayToggle
-							label={Liferay.Language.get('mandatory')}
-							onToggle={() => {
-								setFormState({
-									...formState,
-									required: !formState.required,
-								});
+						<ClayModal.Footer
+							last={
+								<ClayButton.Group key={1} spaced>
+									<ClayButton
+										displayType="secondary"
+										onClick={() => onClose()}
+									>
+										{Liferay.Language.get('cancel')}
+									</ClayButton>
 
-								error && setError('');
-							}}
-							toggled={formState.required}
+									<ClayButton
+										displayType="primary"
+										type="submit"
+									>
+										{Liferay.Language.get('save')}
+									</ClayButton>
+								</ClayButton.Group>
+							}
 						/>
-					</ClayModal.Body>
-
-					<ClayModal.Footer
-						last={
-							<ClayButton.Group key={1} spaced>
-								<ClayButton
-									displayType="secondary"
-									onClick={() => onClose()}
-								>
-									{Liferay.Language.get('cancel')}
-								</ClayButton>
-
-								<ClayButton
-									displayType="primary"
-									onClick={() => handleSaveObjectField()}
-								>
-									{Liferay.Language.get('save')}
-								</ClayButton>
-							</ClayButton.Group>
-						}
-					/>
+					</ClayForm>
 				</ClayModal>
 			)}
 		</>

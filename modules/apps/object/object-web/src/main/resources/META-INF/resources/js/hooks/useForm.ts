@@ -23,7 +23,7 @@ type TUseFormProps = {
 };
 
 type TGenericObject = {
-	[key: string]: string;
+	[key: string]: any;
 };
 
 type TUseForm = (
