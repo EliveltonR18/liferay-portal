@@ -58,7 +58,7 @@ const ObjectLayoutBox: React.FC<IObjectLayoutBoxProps> = ({
 									dispatch({
 										payload: {
 											attribute: {
-												collapsable,
+												key: 'collapsable',
 												value,
 											},
 											boxIndex,

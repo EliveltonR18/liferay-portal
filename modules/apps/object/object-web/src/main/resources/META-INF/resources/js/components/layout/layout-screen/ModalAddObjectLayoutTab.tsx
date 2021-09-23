@@ -186,56 +186,54 @@ const ModalAddObjectLayoutTab: React.FC<IModalAddObjectLayoutTabProps> = ({
 					</ClayForm.Group>
 
 					{selectedType === TYPES.RELATIONSHIPS && (
-						<ClayForm.Group>
-							<AutoComplete
-								contentRight={
-									<ClayLabel
-										className="label-inside-custom-select"
-										displayType="secondary"
-									>
-										{selectedRelationship?.type}
-									</ClayLabel>
-								}
-								emptyStateMessage={Liferay.Language.get(
-									'there-are-no-relationship-for-this-object'
-								)}
-								error={errors.objectRelationshipId}
-								items={filteredRelationships}
-								label={Liferay.Language.get('relationship')}
-								onChangeQuery={setQuery}
-								onSelectItem={(item) => {
-									const syntheticEvent: any = {
-										target: {
-											name: 'objectRelationshipId',
-											value: item.id,
-										},
-									};
+						<AutoComplete
+							contentRight={
+								<ClayLabel
+									className="label-inside-custom-select"
+									displayType="secondary"
+								>
+									{selectedRelationship?.type}
+								</ClayLabel>
+							}
+							emptyStateMessage={Liferay.Language.get(
+								'there-are-no-relationship-for-this-object'
+							)}
+							error={errors.objectRelationshipId}
+							items={filteredRelationships}
+							label={Liferay.Language.get('relationship')}
+							onChangeQuery={setQuery}
+							onSelectItem={(item) => {
+								const syntheticEvent: any = {
+									target: {
+										name: 'objectRelationshipId',
+										value: item.id,
+									},
+								};
 
-									setSelectedRelationship(item);
-									handleChange(syntheticEvent);
-								}}
-								query={query}
-								required
-								value={
-									selectedRelationship?.label[
-										defaultLanguageId
-									] ?? selectedRelationship?.name
-								}
-							>
-								{({label, name, type}) => (
-									<div className="d-flex justify-content-between">
-										<div>
-											{label[defaultLanguageId] ?? name}
-										</div>
-										<div>
-											<ClayLabel displayType="secondary">
-												{type}
-											</ClayLabel>
-										</div>
+								setSelectedRelationship(item);
+								handleChange(syntheticEvent);
+							}}
+							query={query}
+							required
+							value={
+								selectedRelationship?.label[
+									defaultLanguageId
+								] ?? selectedRelationship?.name
+							}
+						>
+							{({label, name, type}) => (
+								<div className="d-flex justify-content-between">
+									<div>
+										{label[defaultLanguageId] ?? name}
 									</div>
-								)}
-							</AutoComplete>
-						</ClayForm.Group>
+									<div>
+										<ClayLabel displayType="secondary">
+											{type}
+										</ClayLabel>
+									</div>
+								</div>
+							)}
+						</AutoComplete>
 					)}
 				</ClayModal.Body>
 				<ClayModal.Footer
