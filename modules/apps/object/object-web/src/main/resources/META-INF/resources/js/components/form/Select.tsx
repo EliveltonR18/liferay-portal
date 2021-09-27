@@ -61,6 +61,7 @@ const Select: React.FC<ISelectProps> = ({
 				disabled={disabled}
 				id={id}
 				onChange={onChange}
+				placeholder={Liferay.Language.get('choose-an-option')}
 			>
 				{options.map((label, index) => (
 					<ClaySelect.Option
