@@ -107,6 +107,12 @@ const Layout: React.FC<React.HTMLAttributes<HTMLElement>> = () => {
 	const [activeIndex, setActiveIndex] = useState<number>(0);
 	const [loading, setLoading] = useState<boolean>(true);
 
+	const onCloseSidePanel = () => {
+		const parentWindow = Liferay.Util.getOpener();
+
+		parentWindow.Liferay.fire('close-side-panel');
+	};
+
 	useEffect(() => {
 		const makeFetch = async () => {
 			const objectLayoutResponse = await Liferay.Util.fetch(
@@ -256,8 +262,8 @@ const Layout: React.FC<React.HTMLAttributes<HTMLElement>> = () => {
 					<SidePanelContent.Footer>
 						<ClayButton.Group spaced>
 							<ClayButton
-								className="btn-cancel"
 								displayType="secondary"
+								onClick={onCloseSidePanel}
 							>
 								{Liferay.Language.get('cancel')}
 							</ClayButton>
