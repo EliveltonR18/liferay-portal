@@ -43,6 +43,11 @@ $bgColor: #f7f8f9;
 			border: 2px solid #0b5fff;
 			color: initial;
 		}
+
+		&.disabled {
+			cursor: default;
+			opacity: 0.5;
+		}
 	}
 }
 
