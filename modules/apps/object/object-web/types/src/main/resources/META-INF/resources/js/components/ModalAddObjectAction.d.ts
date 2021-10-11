@@ -17,6 +17,8 @@ interface IProps extends React.HTMLAttributes<HTMLElement> {
 	apiURL: string;
 	objectActionExecutors: TObjectActionExecutor[];
 	objectActionTriggers: TObjectActionTrigger[];
+	observer: any;
+	onClose: () => void;
 }
 declare type TObjectActionTrigger = {
 	description: string;

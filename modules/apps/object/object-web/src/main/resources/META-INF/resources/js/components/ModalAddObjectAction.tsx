@@ -14,41 +14,13 @@
 
 import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
+import ClayForm from '@clayui/form';
 import ClayModal, {ClayModalProvider, useModal} from '@clayui/modal';
 import React, {useEffect, useState} from 'react';
 
+import useForm from '../hooks/useForm';
 import CustomSelect from './form/CustomSelect';
 import Input from './form/Input';
-
-interface IProps extends React.HTMLAttributes<HTMLElement> {
-	apiURL: string;
-	objectActionExecutors: TObjectActionExecutor[];
-	objectActionTriggers: TObjectActionTrigger[];
-}
-
-type TObjectActionTrigger = {
-	description: string;
-	key: string;
-	label: string;
-};
-
-type TObjectActionExecutor = {
-	description: string;
-	key: string;
-	label: string;
-};
-
-type TObjectAction = {
-	key: string;
-	label: string;
-	description: string;
-};
-
-type TFormState = {
-	name: string;
-	objectActionExecutor: TObjectAction;
-	objectActionTrigger: TObjectAction;
-};
 
 const headers = new Headers({
 	Accept: 'application/json',
@@ -59,9 +31,10 @@ const ModalAddObjectAction: React.FC<IProps> = ({
 	apiURL,
 	objectActionExecutors,
 	objectActionTriggers,
+	observer,
+	onClose,
 }) => {
-	const [visibleModal, setVisibleModal] = useState<boolean>(false);
-	const [formState, setFormState] = useState<TFormState>({
+	const initialValues: TInitialValues = {
 		name: '',
 		objectActionExecutor: {
 			description: '',
@@ -73,16 +46,14 @@ const ModalAddObjectAction: React.FC<IProps> = ({
 			key: '',
 			label: '',
 		},
-	});
+	};
 	const [error, setError] = useState<string>('');
 
-	const {observer, onClose} = useModal({
-		onClose: () => setVisibleModal(false),
-	});
-
-	const handleSaveObjectAction = async () => {
-		const {name, objectActionExecutor, objectActionTrigger} = formState;
-
+	const onSubmit = async ({
+		name,
+		objectActionExecutor,
+		objectActionTrigger,
+	}: TInitialValues) => {
 		const response = await Liferay.Util.fetch(apiURL, {
 			body: JSON.stringify({
 				active: false,
@@ -111,117 +82,154 @@ const ModalAddObjectAction: React.FC<IProps> = ({
 		}
 	};
 
-	const handleOpenObjectActionModal = () => setVisibleModal(true);
+	const validate = (values: TInitialValues) => {
+		const errors: any = {};
 
-	useEffect(() => {
-		Liferay.on('addObjectAction', handleOpenObjectActionModal);
+		if (!values.name) {
+			errors.name = Liferay.Language.get('required');
+		}
 
-		return () => {
-			Liferay.detach('addObjectAction', handleOpenObjectActionModal);
-		};
-	}, []);
+		if (!values.objectActionTrigger.label) {
+			errors.trigger = Liferay.Language.get('required');
+		}
+
+		if (!values.objectActionExecutor.label) {
+			errors.executor = Liferay.Language.get('required');
+		}
+
+		return errors;
+	};
+
+	const {errors, handleChange, handleSubmit, values} = useForm({
+		initialValues,
+		onSubmit,
+		validate,
+	});
 
 	return (
-		<>
-			{visibleModal && (
-				<ClayModal observer={observer}>
-					<ClayModal.Header>
-						{Liferay.Language.get('new-action')}
-					</ClayModal.Header>
+		<ClayModal observer={observer}>
+			<ClayForm onSubmit={handleSubmit}>
+				<ClayModal.Header>
+					{Liferay.Language.get('new-action')}
+				</ClayModal.Header>
 
-					<ClayModal.Body>
-						{error && (
-							<ClayAlert displayType="danger">{error}</ClayAlert>
-						)}
+				<ClayModal.Body>
+					{error && (
+						<ClayAlert displayType="danger">{error}</ClayAlert>
+					)}
 
-						<Input
-							id="objectActionName"
-							label={Liferay.Language.get('action-name')}
-							name="objectActionName"
-							onChange={({target: {value}}: any) => {
-								setFormState({
-									...formState,
-									name: value,
-								});
-
-								error && setError('');
-							}}
-							required
-							value={formState.name}
-						/>
-
-						<CustomSelect
-							label={Liferay.Language.get('when')}
-							onChange={(objectActionTrigger: any) => {
-								setFormState({
-									...formState,
-									objectActionTrigger,
-								});
-
-								error && setError('');
-							}}
-							options={objectActionTriggers}
-							required
-							value={formState.objectActionTrigger.label}
-						>
-							{({description, label}) => (
-								<>
-									<div>{label}</div>
-									<span className="text-small">
-										{description}
-									</span>
-								</>
-							)}
-						</CustomSelect>
-
-						<CustomSelect
-							label={Liferay.Language.get('then')}
-							onChange={(objectActionExecutor: any) => {
-								setFormState({
-									...formState,
-									objectActionExecutor,
-								});
-
-								error && setError('');
-							}}
-							options={objectActionExecutors}
-							required
-							value={formState.objectActionExecutor.label}
-						>
-							{({description, label}) => (
-								<>
-									<div>{label}</div>
-									<span className="text-small">
-										{description}
-									</span>
-								</>
-							)}
-						</CustomSelect>
-					</ClayModal.Body>
-
-					<ClayModal.Footer
-						last={
-							<ClayButton.Group key={1} spaced>
-								<ClayButton
-									displayType="secondary"
-									onClick={() => onClose()}
-								>
-									{Liferay.Language.get('cancel')}
-								</ClayButton>
-
-								<ClayButton
-									displayType="primary"
-									onClick={() => handleSaveObjectAction()}
-								>
-									{Liferay.Language.get('save')}
-								</ClayButton>
-							</ClayButton.Group>
-						}
+					<Input
+						error={errors.name}
+						id="objectActionName"
+						label={Liferay.Language.get('action-name')}
+						name="name"
+						onChange={handleChange}
+						required
+						value={values.name}
 					/>
-				</ClayModal>
-			)}
-		</>
+
+					<CustomSelect
+						error={errors.trigger}
+						label={Liferay.Language.get('when')}
+						onChange={(objectActionTrigger: any) => {
+							handleChange({
+								target: {
+									name: 'objectActionTrigger',
+									value: objectActionTrigger,
+								},
+							} as any);
+						}}
+						options={objectActionTriggers}
+						required
+						value={values.objectActionTrigger.label}
+					>
+						{({description, label}) => (
+							<>
+								<div>{label}</div>
+								<span className="text-small">
+									{description}
+								</span>
+							</>
+						)}
+					</CustomSelect>
+
+					<CustomSelect
+						error={errors.executor}
+						label={Liferay.Language.get('then')}
+						onChange={(objectActionExecutor: any) => {
+							handleChange({
+								target: {
+									name: 'objectActionExecutor',
+									value: objectActionExecutor,
+								},
+							} as any);
+						}}
+						options={objectActionExecutors}
+						required
+						value={values.objectActionExecutor.label}
+					>
+						{({description, label}) => (
+							<>
+								<div>{label}</div>
+								<span className="text-small">
+									{description}
+								</span>
+							</>
+						)}
+					</CustomSelect>
+				</ClayModal.Body>
+
+				<ClayModal.Footer
+					last={
+						<ClayButton.Group key={1} spaced>
+							<ClayButton
+								displayType="secondary"
+								onClick={() => onClose()}
+							>
+								{Liferay.Language.get('cancel')}
+							</ClayButton>
+
+							<ClayButton displayType="primary" type="submit">
+								{Liferay.Language.get('save')}
+							</ClayButton>
+						</ClayButton.Group>
+					}
+				/>
+			</ClayForm>
+		</ClayModal>
 	);
+};
+
+interface IProps extends React.HTMLAttributes<HTMLElement> {
+	apiURL: string;
+	objectActionExecutors: TObjectActionExecutor[];
+	objectActionTriggers: TObjectActionTrigger[];
+	observer: any;
+	onClose: () => void;
+}
+
+type TObjectActionTrigger = {
+	description: string;
+	key: string;
+	label: string;
+};
+
+type TObjectActionExecutor = {
+	description: string;
+	key: string;
+	label: string;
+};
+
+type TObjectAction = {
+	key: string;
+	label: string;
+	description: string;
+};
+
+type TInitialValues = {
+	name: string;
+	objectActionExecutor: TObjectAction;
+	objectActionTrigger: TObjectAction;
 };
 
 const ModalWithProvider: React.FC<IProps> = ({
@@ -229,13 +237,30 @@ const ModalWithProvider: React.FC<IProps> = ({
 	objectActionExecutors,
 	objectActionTriggers,
 }) => {
+	const [visibleModal, setVisibleModal] = useState<boolean>(false);
+	const {observer, onClose} = useModal({
+		onClose: () => setVisibleModal(false),
+	});
+
+	useEffect(() => {
+		Liferay.on('addObjectAction', () => setVisibleModal(true));
+
+		return () => {
+			Liferay.detach('addObjectAction', () => setVisibleModal(true));
+		};
+	}, []);
+
 	return (
 		<ClayModalProvider>
-			<ModalAddObjectAction
-				apiURL={apiURL}
-				objectActionExecutors={objectActionExecutors}
-				objectActionTriggers={objectActionTriggers}
-			/>
+			{visibleModal && (
+				<ModalAddObjectAction
+					apiURL={apiURL}
+					objectActionExecutors={objectActionExecutors}
+					objectActionTriggers={objectActionTriggers}
+					observer={observer}
+					onClose={onClose}
+				/>
+			)}
 		</ClayModalProvider>
 	);
 };
