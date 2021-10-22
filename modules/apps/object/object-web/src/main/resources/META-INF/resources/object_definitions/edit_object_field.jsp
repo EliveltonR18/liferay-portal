@@ -116,7 +116,14 @@ ObjectField objectField = (ObjectField)request.getAttribute(ObjectWebKeys.OBJECT
 		const searchableContainer = document.querySelector(
 			'#<portlet:namespace />searchableContainer'
 		);
+		const indexedGroup = document.querySelector(
+			'#<portlet:namespace />indexedGroup'
+		);
+		const indexed = document.querySelector('#<portlet:namespace />indexed')
+			.value;
 
+		indexedGroup.style.display =
+			indexed && event.target.value === 'String' ? 'block' : 'none';
 		searchableContainer.style.display =
 			event.target.value !== 'Blob' ? 'block' : 'none';
 	}
@@ -125,7 +132,7 @@ ObjectField objectField = (ObjectField)request.getAttribute(ObjectWebKeys.OBJECT
 		const indexedGroup = document.querySelector(
 			'#<portlet:namespace />indexedGroup'
 		);
-		const type = '<%= objectField.getType() %>';
+		const type = document.querySelector('#<portlet:namespace />type').value;
 
 		indexedGroup.style.display =
 			event.target.checked && type === 'String' ? 'block' : 'none';
