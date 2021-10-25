@@ -15,12 +15,8 @@
 import React from 'react';
 interface IProps extends React.HTMLAttributes<HTMLElement> {
 	apiURL: string;
-	objectDefinitions: TObjectDefinition[];
+	observer: any;
+	onClose: () => void;
 }
-declare type TObjectDefinition = {
-	id: string;
-	name: string;
-	system: boolean;
-};
 declare const ModalWithProvider: React.FC<IProps>;
 export default ModalWithProvider;
