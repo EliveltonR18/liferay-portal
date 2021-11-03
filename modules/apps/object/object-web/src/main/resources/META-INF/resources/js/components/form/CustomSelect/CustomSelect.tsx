@@ -12,15 +12,16 @@
  * details.
  */
 
+import ClayAutocomplete from '@clayui/autocomplete';
 import ClayDropDown from '@clayui/drop-down';
 import ClayForm from '@clayui/form';
 import classNames from 'classnames';
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 
-import CustomSelectComponent from '../custom-select/CustomSelect';
-import ErrorFeedback from './ErrorFeedback';
-import FeedbackMessage from './FeedbackMessage';
-import RequiredMask from './RequiredMask';
+import './CustomSelect.scss';
+import ErrorFeedback from '../ErrorFeedback';
+import FeedbackMessage from '../FeedbackMessage';
+import RequiredMask from '../RequiredMask';
 
 interface ICustomSelectProps extends React.HTMLAttributes<HTMLElement> {
 	children: (item: any) => React.ReactNode;
@@ -48,6 +49,7 @@ const CustomSelect: React.FC<ICustomSelectProps> = ({
 	...otherProps
 }) => {
 	const [active, setActive] = useState<boolean>(false);
+	const inputRef = useRef(null);
 
 	return (
 		<ClayForm.Group
@@ -61,33 +63,40 @@ const CustomSelect: React.FC<ICustomSelectProps> = ({
 				{required && <RequiredMask />}
 			</label>
 
-			<ClayDropDown
-				{...otherProps}
-				active={active}
-				onActiveChange={(value) => setActive(value)}
-				trigger={
-					<CustomSelectComponent
-						placeholder={Liferay.Language.get('choose-an-option')}
-						value={value}
-					/>
-				}
-			>
-				<ClayDropDown.ItemList>
-					{options?.map((option, index) => {
-						return (
-							<ClayDropDown.Item
-								key={index}
-								onClick={() => {
-									setActive(false);
-									onChange && onChange(option);
-								}}
-							>
-								{children && children(option)}
-							</ClayDropDown.Item>
-						);
-					})}
-				</ClayDropDown.ItemList>
-			</ClayDropDown>
+			<ClayAutocomplete>
+				<ClayAutocomplete.Input
+					className="custom-select-trigger"
+					onClick={() => setActive(!active)}
+					placeholder={Liferay.Language.get('choose-an-option')}
+					readOnly
+					ref={inputRef}
+					value={value}
+				/>
+
+				<ClayAutocomplete.DropDown
+					{...otherProps}
+					active={active}
+					alignElementRef={inputRef}
+					closeOnClickOutside
+					onSetActive={setActive}
+				>
+					<ClayDropDown.ItemList>
+						{options?.map((option, index) => {
+							return (
+								<ClayDropDown.Item
+									key={index}
+									onClick={() => {
+										setActive(false);
+										onChange && onChange(option);
+									}}
+								>
+									{children && children(option)}
+								</ClayDropDown.Item>
+							);
+						})}
+					</ClayDropDown.ItemList>
+				</ClayAutocomplete.DropDown>
+			</ClayAutocomplete>
 
 			{error && <ErrorFeedback error={error} />}
 

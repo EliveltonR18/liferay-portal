@@ -13,6 +13,7 @@
  */
 
 import React from 'react';
+import './CustomSelect.scss';
 interface ICustomSelectProps extends React.HTMLAttributes<HTMLElement> {
 	children: (item: any) => React.ReactNode;
 	disabled?: boolean;
