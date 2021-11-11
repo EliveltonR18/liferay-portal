@@ -53,7 +53,7 @@ const CustomSelect: React.FC<ICustomSelectProps> = ({
 
 	return (
 		<ClayForm.Group
-			className={classNames(className, {
+			className={classNames('object__custom-select', className, {
 				'has-error': error,
 			})}
 		>
@@ -65,10 +65,9 @@ const CustomSelect: React.FC<ICustomSelectProps> = ({
 
 			<ClayAutocomplete>
 				<ClayAutocomplete.Input
-					className="custom-select-trigger"
+					className="object__custom-select-input"
 					onClick={() => setActive(!active)}
 					placeholder={Liferay.Language.get('choose-an-option')}
-					readOnly
 					ref={inputRef}
 					value={value}
 				/>
