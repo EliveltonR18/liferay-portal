@@ -140,8 +140,6 @@ portletDisplay.setURLBack(backURL);
 										'<%= LanguageUtil.get(request, "your-request-completed-successfully") %>',
 									type: 'success',
 								});
-
-								Liferay.Util.navigate('<%= backURL%>');
 							}
 							else {
 								return response.json();
