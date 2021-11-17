@@ -9,7 +9,7 @@
 	transition: transform ease 500ms, box-shadow ease 500ms, width ease 500ms;
 	width: 70%;
 	will-change: transform, box-shadow, opacity, width;
-	z-index: 1020;
+	z-index: 999;
 
 	iframe {
 		height: 100%;
