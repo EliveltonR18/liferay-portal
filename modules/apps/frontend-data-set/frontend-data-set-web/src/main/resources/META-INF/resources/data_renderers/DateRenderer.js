@@ -14,9 +14,16 @@
 
 import PropType from 'prop-types';
 
+import {getDateFromDateString, prettifyDateObject} from '../utils/dates';
+
 function DateRenderer({options, value}) {
 	if (!value) {
 		return null;
+	}
+
+	if (options.isISOFormat) {
+		const dateObject = getDateFromDateString(value.split('T')[0]);
+		value = prettifyDateObject(dateObject);
 	}
 
 	const locale = themeDisplay.getLanguageId().replace('_', '-');

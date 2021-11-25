@@ -79,6 +79,10 @@ public class ObjectEntriesTableClayDataSetDisplayView
 				clayTableSchemaField.setContentRenderer("boolean");
 			}
 
+			else if (Objects.equals(objectField.getType(), "Date")) {
+				clayTableSchemaField.setContentRenderer("date");
+			}
+
 			if (!Objects.equals(objectField.getType(), "Blob") &&
 				objectField.isIndexed()) {
 
