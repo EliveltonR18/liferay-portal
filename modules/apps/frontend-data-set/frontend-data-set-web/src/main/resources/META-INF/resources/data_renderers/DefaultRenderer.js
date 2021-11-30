@@ -13,16 +13,17 @@
  */
 
 import ClayIcon from '@clayui/icon';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 
 import {logError} from '../utils/logError';
 import TooltipTextRenderer from './TooltipTextRenderer';
 
-function DefaultRenderer({value}) {
+function DefaultRenderer({options, value}) {
 	if (
 		typeof value === 'number' ||
-		typeof value === 'string' ||
+		(typeof value === 'string' && !options.truncate) ||
 		value === undefined ||
 		value === null
 	) {
@@ -36,6 +37,18 @@ function DefaultRenderer({value}) {
 	}
 	else if (value.label) {
 		return <>{value.label}</>;
+	}
+	else if (options.truncate) {
+		return (
+			<span
+				className={classNames(
+					'default-renderer__text-truncate',
+					'text-truncate'
+				)}
+			>
+				{value}
+			</span>
+		);
 	}
 
 	logError(
