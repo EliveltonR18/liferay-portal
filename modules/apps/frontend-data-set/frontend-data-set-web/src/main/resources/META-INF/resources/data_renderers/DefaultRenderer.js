@@ -23,10 +23,23 @@ import TooltipTextRenderer from './TooltipTextRenderer';
 function DefaultRenderer({options, value}) {
 	if (
 		typeof value === 'number' ||
-		(typeof value === 'string' && !options.truncate) ||
+		typeof value === 'string' ||
 		value === undefined ||
 		value === null
 	) {
+		if (options.truncate) {
+			return (
+				<span
+					className={classNames(
+						'default-renderer__text-truncate',
+						'text-truncate'
+					)}
+				>
+					{value ?? ''}
+				</span>
+			);
+		}
+
 		return <>{value ?? ''}</>;
 	}
 	else if (value.icon) {
@@ -36,19 +49,20 @@ function DefaultRenderer({options, value}) {
 		return <TooltipTextRenderer value={value} />;
 	}
 	else if (value.label) {
+		if (options.truncate) {
+			return (
+				<span
+					className={classNames(
+						'default-renderer__text-truncate',
+						'text-truncate'
+					)}
+				>
+					{value.label}
+				</span>
+			);
+		}
+
 		return <>{value.label}</>;
-	}
-	else if (options.truncate) {
-		return (
-			<span
-				className={classNames(
-					'default-renderer__text-truncate',
-					'text-truncate'
-				)}
-			>
-				{value}
-			</span>
-		);
 	}
 
 	logError(
