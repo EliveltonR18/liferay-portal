@@ -13,11 +13,11 @@
  */
 
 import React from 'react';
-import {TObjectLayoutRow} from '../types';
+import {TName, TObjectLayoutRow} from '../types';
 interface IObjectLayoutBoxProps extends React.HTMLAttributes<HTMLElement> {
 	boxIndex: number;
 	collapsable: boolean;
-	label: string;
+	name: TName;
 	objectLayoutRows?: TObjectLayoutRow[];
 	tabIndex: number;
 }

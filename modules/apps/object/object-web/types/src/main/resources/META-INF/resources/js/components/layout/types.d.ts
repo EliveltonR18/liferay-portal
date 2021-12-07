@@ -12,6 +12,7 @@
  * details.
  */
 
+import {ItemTypes} from '../../utils/itemTypes';
 export declare type TName = {
 	[key: string]: string;
 };
@@ -61,4 +62,21 @@ export declare type TObjectRelationship = {
 	objectDefinitionId1: number;
 	objectDefinitionId2: number;
 	type: string;
+};
+export declare type DragFieldItem = {
+	boxIndex: number;
+	columnIndex: number;
+	objectField: TObjectField;
+	objectFieldSize: number;
+	rowIndex: number;
+	tabIndex: number;
+	type: ItemTypes.FIELD;
+};
+export declare type DragBlockItem = {
+	boxIndex: number;
+	collapsable: boolean;
+	name: string;
+	objectLayoutRows: TObjectLayoutRow[];
+	tabIndex: number;
+	type: ItemTypes.BLOCK;
 };

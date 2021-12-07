@@ -12,10 +12,8 @@
  * details.
  */
 
-import React from 'react';
-import './Panel.scss';
-declare const Panel: React.ForwardRefExoticComponent<
-	React.HTMLAttributes<HTMLElement>
-> &
-	any;
-export default Panel;
+export declare enum ItemTypes {
+	BLOCK = 'block',
+	FIELD = 'field',
+	TAB = 'tab',
+}

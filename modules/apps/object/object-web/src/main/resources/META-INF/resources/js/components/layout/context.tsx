@@ -50,6 +50,10 @@ export enum TYPES {
 	ADD_OBJECT_RELATIONSHIPS = 'ADD_OBJECT_RELATIONSHIPS',
 	CHANGE_OBJECT_LAYOUT_BOX_ATTRIBUTE = 'CHANGE_OBJECT_LAYOUT_BOX_ATTRIBUTE',
 	CHANGE_OBJECT_LAYOUT_NAME = 'CHANGE_OBJECT_LAYOUT_NAME',
+	CHANGE_OBJECT_LAYOUT_BOX_INDEX = 'CHANGE_OBJECT_LAYOUT_BOX_INDEX',
+	CHANGE_OBJECT_LAYOUT_COLUMN_INDEX = 'CHANGE_OBJECT_LAYOUT_COLUMN_INDEX',
+	CHANGE_OBJECT_LAYOUT_BOX_TAB_INDEX = 'CHANGE_OBJECT_LAYOUT_BOX_TAB_INDEX',
+	CHANGE_OBJECT_LAYOUT_TAB_INDEX = 'CHANGE_OBJECT_LAYOUT_TAB_INDEX',
 	DELETE_OBJECT_LAYOUT_BOX = 'DELETE_OBJECT_LAYOUT_BOX',
 	DELETE_OBJECT_LAYOUT_FIELD = 'DELETE_OBJECT_LAYOUT_FIELD',
 	DELETE_OBJECT_LAYOUT_TAB = 'DELETE_OBJECT_LAYOUT_TAB',
@@ -166,18 +170,20 @@ const layoutReducer = (state: TState, action: TAction) => {
 				newState.objectLayout.objectLayoutTabs[tabIndex]
 					.objectLayoutBoxes[boxIndex];
 
+			const {objectLayoutRows} = objectLayoutBox;
+
 			const objectLayoutRowIndex = findObjectLayoutRowIndex(
-				objectLayoutBox.objectLayoutRows,
+				objectLayoutRows,
 				objectFieldSize
 			);
 
 			if (objectLayoutRowIndex > -1) {
-				objectLayoutBox.objectLayoutRows[
-					objectLayoutRowIndex
-				].objectLayoutColumns.push(newField);
+				objectLayoutRows[objectLayoutRowIndex].objectLayoutColumns.push(
+					newField
+				);
 			}
 			else {
-				objectLayoutBox.objectLayoutRows.push({
+				objectLayoutRows.push({
 					objectLayoutColumns: [newField],
 					priority: 0,
 				});
@@ -328,6 +334,77 @@ const layoutReducer = (state: TState, action: TAction) => {
 			// Delete object layout tab
 
 			newState.objectLayout.objectLayoutTabs.splice(tabIndex, 1);
+
+			return newState;
+		}
+		case TYPES.CHANGE_OBJECT_LAYOUT_BOX_TAB_INDEX: {
+			const {
+				boxIndex,
+				collapsable,
+				itemTabIndex,
+				name,
+				objectLayoutRows,
+				tabIndex,
+			} = action.payload;
+
+			const newState = {...state};
+
+			newState.objectLayout.objectLayoutTabs[
+				itemTabIndex
+			].objectLayoutBoxes.splice(boxIndex, 1);
+
+			newState.objectLayout.objectLayoutTabs[
+				tabIndex
+			].objectLayoutBoxes.push({
+				collapsable,
+				name,
+				objectLayoutRows,
+				priority: 0,
+			});
+
+			return newState;
+		}
+		case TYPES.CHANGE_OBJECT_LAYOUT_COLUMN_INDEX: {
+			const {
+				boxIndex,
+				dragIndex,
+				hoverIndex,
+				rowIndex,
+				tabIndex,
+			} = action.payload;
+
+			const newState = {...state};
+			const objectLayoutColumns =
+				newState.objectLayout.objectLayoutTabs[tabIndex]
+					.objectLayoutBoxes[boxIndex].objectLayoutRows[rowIndex]
+					.objectLayoutColumns;
+
+			const [removed] = objectLayoutColumns.splice(dragIndex, 1);
+			objectLayoutColumns.splice(hoverIndex, 0, removed);
+
+			return newState;
+		}
+		case TYPES.CHANGE_OBJECT_LAYOUT_BOX_INDEX: {
+			const {dragIndex, hoverIndex, tabIndex} = action.payload;
+
+			const newState = {...state};
+			const objectLayoutBoxes =
+				newState.objectLayout.objectLayoutTabs[tabIndex]
+					.objectLayoutBoxes;
+
+			const [removed] = objectLayoutBoxes.splice(dragIndex, 1);
+			objectLayoutBoxes.splice(hoverIndex, 0, removed);
+
+			return newState;
+		}
+		case TYPES.CHANGE_OBJECT_LAYOUT_TAB_INDEX: {
+			const {dragIndex, hoverIndex} = action.payload;
+
+			const newState = {...state};
+			const {objectLayoutTabs} = newState.objectLayout;
+
+			const [removed] = objectLayoutTabs.splice(dragIndex, 1);
+			objectLayoutTabs.splice(hoverIndex, 0, removed);
 
 			return newState;
 		}

@@ -13,9 +13,13 @@
  */
 
 import React from 'react';
-import './Panel.scss';
-declare const Panel: React.ForwardRefExoticComponent<
-	React.HTMLAttributes<HTMLElement>
-> &
-	any;
-export default Panel;
+import {TName, TObjectLayoutBox} from '../types';
+interface IObjectLayoutTabProps extends React.HTMLAttributes<HTMLElement> {
+	name: TName;
+	objectLayoutBoxes: TObjectLayoutBox[];
+	objectRelationshipId: number;
+	onClickAddBlock: () => void;
+	tabIndex: number;
+}
+declare const ObjectLayoutTab: React.FC<IObjectLayoutTabProps>;
+export default ObjectLayoutTab;

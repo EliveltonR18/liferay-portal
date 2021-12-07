@@ -12,8 +12,10 @@
  * details.
  */
 
-import React, {useContext} from 'react';
+import React, {useContext, useRef} from 'react';
+import {DropTargetMonitor, useDrag, useDrop} from 'react-dnd';
 
+import {ItemTypes} from '../../../utils/itemTypes';
 import {normalizeLanguageId} from '../../../utils/string';
 import Panel from '../../Panel/Panel';
 import LayoutContext, {TYPES} from '../context';
@@ -40,15 +42,108 @@ const ObjectLayoutField: React.FC<IObjectLayoutFieldProps> = ({
 	rowIndex,
 	tabIndex,
 }) => {
-	const [{objectFields}, dispatch] = useContext(LayoutContext);
+	const ref = useRef<HTMLDivElement>(null);
+	const [
+		{
+			objectFields,
+			objectLayout: {objectLayoutTabs},
+		},
+		dispatch,
+	] = useContext(LayoutContext);
+	const {FIELD} = ItemTypes;
 
 	const objectField = objectFields.find(
 		({id}) => id === objectFieldId
 	) as TObjectField;
+	const {objectLayoutBoxes} = objectLayoutTabs[tabIndex];
+	const {objectLayoutRows} = objectLayoutBoxes[boxIndex];
+	const {objectLayoutColumns} = objectLayoutRows[rowIndex];
+	const objectLayoutColumn = objectLayoutColumns[columnIndex];
+
+	const [{handlerId}, drop] = useDrop({
+		accept: [ItemTypes.FIELD],
+		collect(monitor) {
+			return {
+				handlerId: monitor.getHandlerId(),
+			};
+		},
+		hover(item: any, monitor: DropTargetMonitor) {
+			if (!ref.current) {
+				return;
+			}
+
+			const dragIndex = item.columnIndex;
+			const hoverIndex = columnIndex;
+
+			if (dragIndex === hoverIndex) {
+				return;
+			}
+
+			if (
+				!objectLayoutColumns.some(
+					(column) => column.objectFieldId === item.objectField.id
+				)
+			) {
+				return;
+			}
+
+			const hoverBoundingRect = ref.current?.getBoundingClientRect();
+
+			const hoverMiddleX =
+				(hoverBoundingRect.left - hoverBoundingRect.right) / 2;
+
+			const clientOffset = monitor.getClientOffset();
+
+			const hoverClientX = clientOffset!.x - hoverBoundingRect.right;
+
+			if (dragIndex < hoverIndex && hoverClientX < hoverMiddleX) {
+				return;
+			}
+
+			if (dragIndex > hoverIndex && hoverClientX > hoverMiddleX) {
+				return;
+			}
+
+			dispatch({
+				payload: {
+					boxIndex,
+					dragIndex,
+					hoverIndex,
+					rowIndex,
+					tabIndex,
+				},
+				type: TYPES.CHANGE_OBJECT_LAYOUT_COLUMN_INDEX,
+			});
+
+			item.columnIndex = hoverIndex;
+		},
+	});
+
+	const [{opacity}, drag] = useDrag({
+		collect: (monitor) => ({
+			opacity: monitor.isDragging() ? 0.4 : 1,
+		}),
+		item: {
+			boxIndex,
+			columnIndex,
+			objectField,
+			objectFieldSize: objectLayoutColumn?.size,
+			rowIndex,
+			tabIndex,
+			type: FIELD,
+		},
+	});
+
+	drag(drop(ref));
 
 	return (
 		<>
-			<Panel key={`field_${objectFieldId}`}>
+			<Panel
+				data-handler-id={handlerId}
+				key={`field_${objectFieldId}`}
+				ref={ref}
+				style={{opacity}}
+			>
 				<Panel.SimpleBody
 					contentRight={
 						<DropdownWithDeleteButton

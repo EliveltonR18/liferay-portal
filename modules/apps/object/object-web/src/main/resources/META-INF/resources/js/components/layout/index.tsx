@@ -15,6 +15,8 @@
 import ClayButton from '@clayui/button';
 import ClayTabs from '@clayui/tabs';
 import React, {useContext, useEffect, useState} from 'react';
+import {DndProvider} from 'react-dnd';
+import {HTML5Backend} from 'react-dnd-html5-backend';
 
 import {TabsVisitor} from '../../utils/visitor';
 import SidePanelContent from '../SidePanelContent';
@@ -306,9 +308,11 @@ const LayoutWrapper: React.FC<ILayoutWrapperProps> = ({
 	objectLayoutId,
 }) => {
 	return (
-		<LayoutContextProvider value={{isViewOnly, objectLayoutId}}>
-			<Layout />
-		</LayoutContextProvider>
+		<DndProvider backend={HTML5Backend}>
+			<LayoutContextProvider value={{isViewOnly, objectLayoutId}}>
+				<Layout />
+			</LayoutContextProvider>
+		</DndProvider>
 	);
 };
 

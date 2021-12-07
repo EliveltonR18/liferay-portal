@@ -20,22 +20,23 @@ import PanelContextProvider, {PanelContext, TYPES} from './context';
 
 import './Panel.scss';
 
-const Panel: React.FC<React.HTMLAttributes<HTMLElement>> & {
-	Body: React.FC<IPanelBodyProps>;
-	Header: React.FC<IPanelHeaderProps>;
-	SimpleBody: React.FC<IPanelSimpleBodyProps>;
-} = ({children, className, ...otherProps}) => {
-	return (
-		<PanelContextProvider>
-			<div
-				{...otherProps}
-				className={classNames(className, 'object-admin-panel')}
-			>
-				{children}
-			</div>
-		</PanelContextProvider>
-	);
-};
+const Panel: React.ForwardRefExoticComponent<
+	React.HTMLAttributes<HTMLElement>
+> &
+	any = React.forwardRef<
+	HTMLDivElement,
+	React.ButtonHTMLAttributes<HTMLDivElement>
+>(({children, className, ...otherProps}, ref) => (
+	<PanelContextProvider>
+		<div
+			{...otherProps}
+			className={classNames(className, 'object-admin-panel')}
+			ref={ref}
+		>
+			{children}
+		</div>
+	</PanelContextProvider>
+));
 
 interface IPanelBodyProps extends React.HTMLAttributes<HTMLElement> {}
 
